@@ -8,7 +8,7 @@ import javafx.scene.shape.Rectangle;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class Point extends Rectangle {
+public class Point extends Circle {
     private Image image;
     private BigDecimal pointValue;
     private boolean obtained;
@@ -17,10 +17,9 @@ public class Point extends Rectangle {
         return pointValue;
     }
 
-    public Point(double posX, double posY, double wid, double hei){
-        super(posX, posY, wid, hei);
+    public Point(double posX, double posY, double radius){
+        super(posX, posY, radius);
         this.setFill(Color.BLUE);
-        this.pointValue = BigDecimal.valueOf((wid+hei)/2).setScale(0, RoundingMode.FLOOR);
     }
 
     public void setObtained(boolean obtained) {

@@ -3,15 +3,13 @@ package sample.gui.gameView;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import sample.*;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 
 public class GameView {
@@ -21,18 +19,17 @@ public class GameView {
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
         stage.setTitle("Super gra");
-        Player player = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
-//        Individual player = new Individual();
-        Population population = new Population(10);
-//        Player p1 = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
-//        Player p2 = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
+//        Player player = new Player(500, 300, GameViewModel.playerRadius);
+        Individual player = new Individual();
+        Population population = new Population(1);
 
-        //System.out.println(population);
+//        for (Individual p : population.getPopulation()){
+//            System.out.println(Arrays.deepToString(p.getGenes()));
+//        }
 
-        int pointsSize = 10;
-        ArrayList<Point> points = new ArrayList<>(pointsSize);
+        Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
-
+        // wygenerowanie przeszkód
         Obstacle[] obstacles = new Obstacle[10];
         for (int i = 0; i < obstacles.length; i++) {
             obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
@@ -40,85 +37,94 @@ public class GameView {
             obstacles[i].setY(Math.random() * (GameViewModel.sceneHeight - 49) + 25);
         }
 
+        Pane pane = new Pane();
         Group root = new Group(obstacles);
         root.getChildren().addAll(player);
-        //root.getChildren().addAll(population.getPopulation());
-
-        for (int i = 0; i < pointsSize; i++) {
-            points.add(new Point(((Math.random() * (GameViewModel.sceneWidth - 49)) + 25), ((Math.random() * (GameViewModel.sceneHeight - 49)) + 25), (Math.random() * 30) + 8, (Math.random() * 30) + 8));
-            root.getChildren().add(points.get(i));
-        }
-
-        Scene scene = new Scene(root, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
-        System.out.println(points.get(0).getLayoutBounds());
+        root.getChildren().addAll(population.getPopulation());
+        pane.getChildren().add(root);
 
 
-        final double[] rangeRight = {0};
-        final double[] rangeLeft = {0};
+        root.getChildren().add(point);
+
+        Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
+//        System.out.println(points.get(0).getLayoutBounds());
+        Image image = pane.snapshot(new SnapshotParameters(), null); // image przechowuje zdjęcie wygenerowanej planszy,
+                                                                                // słuzy do obliczania oddległości przeszkód od gracza
+
+
+//        for (Individual p : population.getPopulation()) {
+//            while(!p.isDead(obstacles)){
+//                p.calcDistancesToAllObstaclesAndPoint(image);
+//                p.calculateMove();
+//                p.moveSomewhere();
+//            }
+//
+//        }
+
 
 
         AnimationTimer timer = new AnimationTimer() {
+            int klatki = 0;
             @Override
             public void handle(long now) {
-//                if (player.getLayoutBounds().getCenterX() < obstacles[0].getBoundsInLocal().getCenterX()) {
-//                    rangeRight[0] = obstacles[0].getBoundsInLocal().getCenterX() - player.centerXProperty().get();
-//                    rangeLeft[0] = 0;
-//                } else {
-//                    rangeLeft[0] = player.centerXProperty().get() - obstacles[0].getBoundsInLocal().getCenterX() ;
-//                    rangeRight[0] = 0;
+                klatki++;
+                klatki %= 60;
+
+
+//                player.calcDistancesToAllObstaclesAndPoint(image);
+//                player.calculateMove();
+//                if(player.isDead(obstacles)){
+//                    System.out.println("SIEMA");
 //                }
 
-                for (Obstacle obstacle : obstacles) {
-
-//                    for(Individual player : population.getPopulation()){
-                    if (player.intersects(obstacle.getLayoutBounds())) {
-                        root.getChildren().remove(player);
-                            population.getPopulation().remove(player); //tu cos jakis blad chyba
-//                    }
+                if(klatki%4==0){
+                    for (Individual individual : population.getPopulation()) {
+//                    int i = (int) (Math.random() * 4) + 1;
+//                    if (i == 1) player.moveUp();
+//                    if (i == 2) player.moveDown();
+//                    if (i == 3) player.moveLeft();
+//                    if (i == 4) player.moveRight();
+                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
+//                        individual.calcDistancesToAllObstaclesAndPoint(image);
+//                        individual.calculateMove();
+//                        individual.moveSomewhere();
+//                        if(individual.isDead(obstacles)){
+//                            System.out.println("SIEMA");
+//                            root.getChildren().remove(individual);
+//                            population.getPopulation().remove(individual);
+//                        }
                     }
                 }
-                for (Point point : points) {
-//                    for(Individual player : population.getPopulation()){
-                    if (player.intersects(point.getLayoutBounds()) && !point.isObtained()) {
-                        player.addPoint(point.getPointValue());
-                        root.getChildren().remove(point);
-                        points.remove(point);
-                        Point newPoint = new Point(((Math.random() * (GameViewModel.sceneWidth - 49)) + 25), ((Math.random() * (GameViewModel.sceneHeight - 49)) + 25), (Math.random() * 30) + 8, (Math.random() * 30) + 8);
-                        points.add(newPoint);
-                        root.getChildren().add(newPoint);
-                        point.setObtained(true);
-                        }
+
+
+
+//                for (Obstacle obstacle : obstacles) {
+//                    for (Individual p : population.getPopulation()) {
+//
+//                        if (p.intersects(obstacle.getLayoutBounds())) {
+//                            root.getChildren().remove(p);
+//                            population.getPopulation().remove(p);
+//                        }
 //                    }
-                    System.out.println(player.getPoints());
-//                    System.out.println("odleglosc z prawej: " + rangeRight[0]);
-//                    System.out.println("odleglosc z lewej: " + rangeLeft[0]);
-                }
+//                }
+//                if (player.intersects(point.getLayoutBounds()) && !point.isObtained()) {
+//                    root.getChildren().remove(point);
+//                    point.setObtained(true);
+//                }
             }
         };
         timer.start();
-        obstacles[0].setFill(Color.YELLOW);
-population.getPopulation().get(1).setFill(Color.CHOCOLATE);
 
 //        double rangeRight = player.centerXProperty().get() + obstacles[0].getLayoutBounds().getCenterX();
 
-//        p1.setFill(Color.CHOCOLATE);
-//        p2.setFill(Color.CRIMSON);
-//        root.getChildren().addAll(p1, p2);
-//        viewModel.moveOnKeyPressed(scene, p1);
-        viewModel.moveOnKeyPressed(scene, player);
+
+//        viewModel.moveOnKeyPressed(scene, player);
 
 
-//        System.out.println(rangeRight);
-
-
-
-        stage.setScene(scene);
-
-
-        GeneticAlgorithm pop = new GeneticAlgorithm(0.25, 0.02, 10);
+//        GeneticAlgorithm pop = new GeneticAlgorithm(0.25, 0.02, 10);
         //Population population = pop.initializePopulation(10);
 
-
+        stage.setScene(scene);
         stage.show();
     }
 }

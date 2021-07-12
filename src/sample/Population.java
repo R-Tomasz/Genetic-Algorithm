@@ -1,12 +1,6 @@
 package sample;
 
-import sample.gui.gameView.GameViewModel;
-import sample.gui.gameView.Player;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Population {
     int populationFitness = 0;
