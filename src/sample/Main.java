@@ -15,9 +15,9 @@ public class Main extends Application {
         GridPane root = new GridPane();
         primaryStage.setScene(new Scene(root, 500, 500));
 
-        GeneticAlgorithm pop = new GeneticAlgorithm(0.25,0.02, 10);
-        Population population = pop.initializePopulation(10);
-        System.out.println(population);
+//        GeneticAlgorithm pop = new GeneticAlgorithm(0.25,0.02, 10);
+//        Population population = pop.initializePopulation(10);
+//        System.out.println(population);
 
 //        Population pop = new Population(10).initializePopulation();
 
@@ -28,8 +28,8 @@ public class Main extends Application {
 
         btn.setOnAction(e ->
         {
-            Label txt2 = new Label(pop.toString());
-            root.getChildren().add(txt2);
+//            Label txt2 = new Label(pop.toString());
+//            root.getChildren().add(txt2);
             //Population pop2 = mutatePopulation(pop);
 //            System.out.println(pop.rouletteChances);
 //            for(int i = 0 ; i<200; i++){

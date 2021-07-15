@@ -26,7 +26,7 @@ public class Individual extends Player {
 
 
     public Individual() {
-        super(100, 100, GameViewModel.playerRadius);
+        super(50, 50, GameViewModel.playerRadius);
         for (int i = 0; i < genes.length; i++) {
             for (int j = 0; j < genes[i].length; j++)
                 genes[i][j] = (int) Math.round(Math.random());
@@ -181,11 +181,11 @@ public class Individual extends Player {
             right[i] = (double) distancesToObstacles[3] * parameters[temp + 3];
             chancesForDirections[i] = up[i] + left[i] + down[i] + right[i];
             temp += 4;
-            System.out.println("----------------------------");
-            System.out.println("TOP:  " + chancesForDirections[0]);
-            System.out.println("LEFT:  " + chancesForDirections[1]);
-            System.out.println("BOTTOM:  " + chancesForDirections[2]);
-            System.out.println("RIGHT:  " + chancesForDirections[3]);
+//            System.out.println("----------------------------");
+//            System.out.println("TOP:  " + chancesForDirections[0]);
+//            System.out.println("LEFT:  " + chancesForDirections[1]);
+//            System.out.println("BOTTOM:  " + chancesForDirections[2]);
+//            System.out.println("RIGHT:  " + chancesForDirections[3]);
             if (temp == 16) break;
         }
     }
@@ -195,14 +195,18 @@ public class Individual extends Player {
     }
 
     public void calculateFitness() {
-        fitness = 0;
+        setFitness(0);
         for (int i = 0; i < genes.length; i++) {
-//            fitness = distanceToPoint
+            setFitness(1000 - (int)distanceToPoint);
         }
     }
 
     public int[][] getGenes() {
         return genes;
+    }
+
+    public void setGenes(int[][] genes) {
+        this.genes = genes;
     }
 
     public void setTopDistance(int topDistance) {

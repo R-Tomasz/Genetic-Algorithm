@@ -3,38 +3,39 @@ package sample;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class GeneticAlgorithm {
+public class GeneticAlgorithm{
     private double mutationRate;
     private double crossoverRate;
-    private int populationSize;
 
 
     private final int bestIndividuals = 1;
-    private final int tournamentEnjoyers = 4;
+    private final int tournamentKnights = 4;
 
 
-    public Population initializePopulation(int numberOfIndividuals) {
-        return new Population(numberOfIndividuals);
+    public Population initializePopulation(int populationSize) {
+        return new Population(populationSize);
     }
 
-    public GeneticAlgorithm(double mutationRate, double crossoverRate, int populationSize) {
-        this.mutationRate = mutationRate;
+    public GeneticAlgorithm(double crossoverRate, double mutationRate) {
         this.crossoverRate = crossoverRate;
-        this.populationSize = populationSize;
+        this.mutationRate = mutationRate;
     }
 
     public Individual tournamentSelection(Population population) {
-        Population tournament = population;
-        for (int i = 0; i < tournamentEnjoyers; i++) {
-            int enjoyer = (int) (Math.random() * populationSize);
-
+        Population tournament = new Population(population.getPopulation().size());
+        for (int i = 0; i < tournamentKnights; i++) {
+            int knightPosition = (int) (Math.random() * population.getPopulation().size());
+            Individual tournamentIndividual = population.getPopulation().get(knightPosition);
+            tournament.setIndividual(knightPosition, tournamentIndividual);
         }
         return tournament.getPopulation().get(0);
     }
 
     public Population crossoverPopulation(Population population) {
+        int startCrossover = (int) (Math.random() * 4);
+        int endCrossover = (int) (Math.random() * 3 ) + 4;
         return population;
-
+//1 0 1 0 1 0 1 0
     }
 
     public Population evolvePopulation(Population population) {
@@ -43,7 +44,7 @@ public class GeneticAlgorithm {
     }
 
     public Population mutatePopulation(Population population) {
-        Population mutatedPopulation = new Population(populationSize);
+        Population mutatedPopulation = new Population(population.getPopulation().size());
         for (int i = 0; i < bestIndividuals; i++) {
             mutatedPopulation.getPopulation().add(population.getPopulation().get(i));
         }
@@ -51,13 +52,14 @@ public class GeneticAlgorithm {
         for (int i = 0 ; i < population.getPopulation().size(); i++) {
             for (int j = 0; j < population.getPopulation().get(i).getGenes().length; i++) {
                 if (Math.random() <= mutationRate) {
-//                    mutatedPopulation.getPopulation().get(i).getGenes()[j] ^= 1;
+                    mutatedPopulation.getPopulation().get(i).getGenes()[i][j] ^= 1;
                 }
             }
         }
-
         return mutatedPopulation;
     }
+
+
 
     public void setMutationRate(double mutationRate) {
         this.mutationRate = mutationRate;
@@ -65,10 +67,6 @@ public class GeneticAlgorithm {
 
     public void setCrossoverRate(double crossoverRate) {
         this.crossoverRate = crossoverRate;
-    }
-
-    public void setPopulationSize(int populationSize) {
-        this.populationSize = populationSize;
     }
 
     public double getMutationRate() {
@@ -79,16 +77,12 @@ public class GeneticAlgorithm {
         return crossoverRate;
     }
 
-    public int getPopulationSize() {
-        return populationSize;
-    }
-
     public int getBestIndividuals() {
         return bestIndividuals;
     }
 
-    public int getTournamentEnjoyers() {
-        return tournamentEnjoyers;
+    public int getTournamentKnights() {
+        return tournamentKnights;
     }
 
 }

@@ -10,12 +10,7 @@ import java.math.RoundingMode;
 
 public class Point extends Circle {
     private Image image;
-    private BigDecimal pointValue;
     private boolean obtained;
-
-    public BigDecimal getPointValue() {
-        return pointValue;
-    }
 
     public Point(double posX, double posY, double radius){
         super(posX, posY, radius);

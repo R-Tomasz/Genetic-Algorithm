@@ -15,44 +15,44 @@ public class GameViewModel {
     public static final int movement = 5;
     public static final int sceneWidth = 1000;
     public static final int sceneHeight = 600;
-    public static final int pointX = 900;
-    public static final int pointY = 500;
+    public static final int pointX = 950;
+    public static final int pointY = 550;
 
 
 
-    public void moveOnKeyPressed(Scene scene, Individual individual, Image image, Obstacle[] obstacles) {
+    public void moveOnKeyPressed(Scene scene, Player circle /*Individual individual, Image image, Obstacle[] obstacles*/) {
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()){
-                case F -> {
-                    individual.calcDistancesToAllObstaclesAndPoint(image);
-                    individual.calculateMove();
-                    individual.moveSomewhere();
-                    if(individual.isDead(obstacles)){
-                        System.out.println("SIEMA");
-//                        root.getChildren().remove(individual);
-//                        population.getPopulation().remove(individual);
-                    }
-                }
-            }
-
-//            switch (event.getCode()) {
-//                case W -> {
-//                    if (!(circle.getCenterY() - movement <= playerRadius))
-//                        circle.setCenterY(circle.getCenterY() - movement);
-//                }
-//                case D -> {
-//                    if (!(circle.getCenterX() + movement >= sceneWidth - playerRadius))
-//                        circle.setCenterX(circle.getCenterX() + movement);
-//                }
-//                case S -> {
-//                    if (!(circle.getCenterY() + movement >= sceneHeight - playerRadius))
-//                        circle.setCenterY(circle.getCenterY() + movement);
-//                }
-//                case A -> {
-//                    if (!(circle.getCenterX() - movement <= playerRadius))
-//                        circle.setCenterX(circle.getCenterX() - movement);
+//            switch (event.getCode()){
+//                case F -> {
+//                    individual.calcDistancesToAllObstaclesAndPoint(image);
+//                    individual.calculateMove();
+//                    individual.moveSomewhere();
+//                    if(individual.isDead(obstacles)){
+////                        System.out.println("SIEMA");
+////                        root.getChildren().remove(individual);
+////                        population.getPopulation().remove(individual);
+//                    }
 //                }
 //            }
+
+            switch (event.getCode()) {
+                case W -> {
+                    if (!(circle.getCenterY() - movement <= playerRadius))
+                        circle.setCenterY(circle.getCenterY() - movement);
+                }
+                case D -> {
+                    if (!(circle.getCenterX() + movement >= sceneWidth - playerRadius))
+                        circle.setCenterX(circle.getCenterX() + movement);
+                }
+                case S -> {
+                    if (!(circle.getCenterY() + movement >= sceneHeight - playerRadius))
+                        circle.setCenterY(circle.getCenterY() + movement);
+                }
+                case A -> {
+                    if (!(circle.getCenterX() - movement <= playerRadius))
+                        circle.setCenterX(circle.getCenterX() - movement);
+                }
+            }
         });
     }
 
