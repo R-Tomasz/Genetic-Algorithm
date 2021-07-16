@@ -113,10 +113,11 @@ public class Individual extends Player {
         for (int i = 1; i < chancesForDirections.length; i++) {
             if (chancesForDirections[i] < min) {
                 temp = i;
-//                if (temp == 0) System.out.println("GORA");
-//                if (temp == 1) System.out.println("LEWO");
-//                if (temp == 2) System.out.println("DOL");
-//                if (temp == 3) System.out.println("PRAWO");
+//                System.out.println("-------------");
+//                System.out.println("GORA:  "+chancesForDirections[0]);
+//                System.out.println("LEWO:  "+chancesForDirections[1]);
+//                System.out.println("DOL:  "+chancesForDirections[2]);
+//                System.out.println("PRAWO:  "+chancesForDirections[3]);
             }
         }
         switch (temp) {

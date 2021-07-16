@@ -18,13 +18,13 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
 
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.25);
+    Population population = ga.initializePopulation(40);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
         stage.setTitle("Super gra");
 //        Player player = new Player(500, 300, GameViewModel.playerRadius);
-        GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.25);
-        final Population[] population = {ga.initializePopulation(4)};
 
         Individual player = new Individual();
 
@@ -45,7 +45,7 @@ public class GameView {
         Pane pane = new Pane();
         Group root = new Group(obstacles);
 //        root.getChildren().addAll(player);
-        root.getChildren().addAll(population[0].getPopulation());
+        root.getChildren().addAll(population.getPopulation());
         pane.getChildren().add(root);
 
 
@@ -65,13 +65,12 @@ public class GameView {
 
         AnimationTimer timer = new AnimationTimer() {
             int frames = 0;
+            int moves = 5;
 
             @Override
             public void handle(long now) {
                 frames++;
                 frames %= 60;
-
-
 //                player.calcDistancesToAllObstaclesAndPoint(image);
 //                player.calculateFitness();
 //                System.out.println(player.getFitness());
@@ -79,8 +78,9 @@ public class GameView {
 
                 if (frames % 4 == 0) {
 //                    outer: while (population.getPopulationFitness() != 1000) {
+                    for (int i = 0; i < moves; i++) {
 
-                        for (Individual individual : population[0].getPopulation()) {
+                        for (Individual individual : population.getPopulation()) {
                             if (!(individual.isDead(obstacles))) {
 //                                int i = (int) (Math.random() * 4) + 1;
 //                                if (i == 1) individual.moveUp();
@@ -98,21 +98,24 @@ public class GameView {
 //                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
 
                             if (individual.pointObtained(point)) {
+                                System.out.println("WIN");
                                 individual.setPointReached(true);
                                 root.getChildren().remove(individual);
                             }
-                            if (Collections.disjoint(root.getChildren(), population[0].getPopulation())){ // sprawdzenie czy na planszy jest jakiś osobnik
-                                population[0].setPopulationFitness();
-                                population[0] = ga.makeNewPopulation(population[0]);
-                                population[0] = ga.crossover(population[0]);
-                                population[0] = ga.mutatePopulation(population[0]);
-                                population[0].sortPopulationByFitness();
-                                System.out.println(population[0].getPopulationFitness());
-                            }
+                        }
+                        if (Collections.disjoint(root.getChildren(), population.getPopulation()) || moves % 5 == 0 && moves != 5) { // sprawdzenie czy na planszy jest jakiś osobnik
+                            population.setPopulationFitness();
+                            root.getChildren().removeAll(population.getPopulation());
+                            population = ga.makeNewPopulation(population);
+                            population = ga.crossover(population);
+                            population = ga.mutatePopulation(population);
+                            population.sortPopulationByFitness();
+                            root.getChildren().addAll(population.getPopulation());
                         }
                     }
                 }
-//            }
+                moves++;
+            }
         };
         timer.start();
 

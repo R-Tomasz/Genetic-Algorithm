@@ -7,7 +7,7 @@ public class GeneticAlgorithm {
     private double crossoverRate;
 
 
-    private final int bestIndividuals = 1;
+    //    private final int bestIndividuals = 1;
     private final int tournamentKnights = 2;
 
 
@@ -48,21 +48,19 @@ public class GeneticAlgorithm {
 
                     for (int genePosition = 0; genePosition < parent1.getGenes().length; genePosition++) {
                         if (Math.random() < 0.5) {
-                            offspring_1.setFirstDimensionGenes(genePosition, parent2.getGenes()[i]);
-                            offspring_2.setFirstDimensionGenes(genePosition, parent1.getGenes()[i]);
+                            offspring_1.setFirstDimensionGenes(genePosition, parent2.getGenes()[i]); //tu blad, i dochodzi do 25
+                            offspring_2.setFirstDimensionGenes(genePosition, parent1.getGenes()[i]); //tu blad
                         } else {
-                            offspring_1.setFirstDimensionGenes(genePosition, parent1.getGenes()[i]);
-                            offspring_2.setFirstDimensionGenes(genePosition, parent2.getGenes()[i]);
+                            offspring_1.setFirstDimensionGenes(genePosition, parent1.getGenes()[i]); //tu blad
+                            offspring_2.setFirstDimensionGenes(genePosition, parent2.getGenes()[i]); //tu blad
                         }
                     }
                     crossedPopulation.setIndividual(firstParent, offspring_1);
                     crossedPopulation.setIndividual(i, offspring_2);
-                }
-                else {
+                } else {
                     firstParent = i;
                 }
-            }
-            else {
+            } else {
                 crossedPopulation.setIndividual(i, parent1);
             }
         }
@@ -91,10 +89,16 @@ public class GeneticAlgorithm {
 //        }
 
         for (int i = 0; i < population.getPopulation().size(); i++) {
-            for (int j = 0; j < population.getPopulation().get(i).getGenes().length; i++) {
-                if (Math.random() <= mutationRate) {
-                    mutatedPopulation.getPopulation().get(i).getGenes()[i][j] ^= 1;
+            for (int j = 0; j < population.getPopulation().get(i).getGenes().length; j++) {
+                for (int k = 0; k < population.getPopulation().get(i).getGenes()[j].length; k++) {
+                    if (Math.random() <= mutationRate) {
+                        if (mutatedPopulation.getPopulation().get(i).getGenes()[j][k] == 0)
+                            mutatedPopulation.getPopulation().get(i).getGenes()[j][k] = 1;
+                        else
+                            mutatedPopulation.getPopulation().get(i).getGenes()[j][k] = 0;
+                    }
                 }
+
             }
         }
         return mutatedPopulation;
@@ -115,10 +119,6 @@ public class GeneticAlgorithm {
 
     public double getCrossoverRate() {
         return crossoverRate;
-    }
-
-    public int getBestIndividuals() {
-        return bestIndividuals;
     }
 
     public int getTournamentKnights() {
