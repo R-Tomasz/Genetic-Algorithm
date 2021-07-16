@@ -14,7 +14,7 @@ public class Population {
         for (int i = 0; i < size; i++) {
             population.add(new Individual());
         }
-        sortPopulationByFitness();
+//        sortPopulationByFitness();
     }
 
     public void sortPopulationByFitness() {
@@ -29,7 +29,6 @@ public class Population {
     public void setIndividual(int position, Individual individual) {
         population.set(position, individual);
     }
-
 
 
     @Override

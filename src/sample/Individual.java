@@ -110,7 +110,7 @@ public class Individual extends Player {
         double min = chancesForDirections[0];
 
         int temp = 0;
-        for (int i = 0; i < chancesForDirections.length; i++) {
+        for (int i = 1; i < chancesForDirections.length; i++) {
             if (chancesForDirections[i] < min) {
                 temp = i;
 //                if (temp == 0) System.out.println("GORA");
@@ -120,18 +120,10 @@ public class Individual extends Player {
             }
         }
         switch (temp) {
-            case (0):
-                moveUp();
-                break;
-            case (1):
-                moveLeft();
-                break;
-            case (2):
-                moveDown();
-                break;
-            case (3):
-                moveRight();
-                break;
+            case (0) -> moveUp();
+            case (1) -> moveLeft();
+            case (2) -> moveDown();
+            case (3) -> moveRight();
         }
     }
 
@@ -207,6 +199,10 @@ public class Individual extends Player {
 
     public void setGenes(int[][] genes) {
         this.genes = genes;
+    }
+
+    public void setFirstDimensionGenes(int position, int[] chromosome) {
+        this.getGenes()[position] = chromosome;
     }
 
     public void setTopDistance(int topDistance) {

@@ -10,6 +10,10 @@ import javafx.stage.Stage;
 
 import sample.*;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 
 public class GameView {
     private final GameViewModel viewModel;
@@ -20,7 +24,7 @@ public class GameView {
         stage.setTitle("Super gra");
 //        Player player = new Player(500, 300, GameViewModel.playerRadius);
         GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.25);
-        Population population = ga.initializePopulation(5);
+        final Population[] population = {ga.initializePopulation(4)};
 
         Individual player = new Individual();
 
@@ -31,17 +35,17 @@ public class GameView {
         Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
         // wygenerowanie przeszkód
-        Obstacle[] obstacles = new Obstacle[20];
+        Obstacle[] obstacles = new Obstacle[40];
         for (int i = 0; i < obstacles.length; i++) {
             obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
             obstacles[i].setX((Math.random() * 901) + 20);
             obstacles[i].setY((Math.random() * 351) + 100);
         }
-// min 20    max 980     min 100 max 500
+
         Pane pane = new Pane();
         Group root = new Group(obstacles);
 //        root.getChildren().addAll(player);
-        root.getChildren().addAll(population.getPopulation());
+        root.getChildren().addAll(population[0].getPopulation());
         pane.getChildren().add(root);
 
 
@@ -50,38 +54,14 @@ public class GameView {
         Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
 //        System.out.println(points.get(0).getLayoutBounds());
 
-         // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
+        // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
         Image image = pane.snapshot(new SnapshotParameters(), null);
 
-//        population.getPopulation().get(0).setCenterX(850);
-//        population.getPopulation().get(0).setCenterY(500);
-//        population.getPopulation().get(1).setCenterX(750);
-//        population.getPopulation().get(1).setCenterY(400);
-//        population.getPopulation().get(2).setCenterX(650);
-//        population.getPopulation().get(2).setCenterY(300);
-//        population.getPopulation().get(0).calcDistancesToAllObstaclesAndPoint(image);
-//        population.getPopulation().get(1).calcDistancesToAllObstaclesAndPoint(image);
-//        population.getPopulation().get(2).calcDistancesToAllObstaclesAndPoint(image);
-//        population.getPopulation().get(0).calculateFitness();
-//        population.getPopulation().get(1).calculateFitness();
-//        population.getPopulation().get(2).calculateFitness();
-//        System.out.println("FITNESS: ");
-//        System.out.println("1:  " + population.getPopulation().get(0).getFitness());
-//        System.out.println("2:  " + population.getPopulation().get(1).getFitness());
-//        System.out.println("3:  " + population.getPopulation().get(2).getFitness());
-//        population.sortPopulationByFitness();
-//        population.setPopulationFitness();
-//        System.out.println(population.getPopulationFitness());
 
-//        for (Individual p : population.getPopulation()) {
-//            while(!p.isDead(obstacles)){
-//                p.calcDistancesToAllObstaclesAndPoint(image);
-//                p.calculateMove();
-//                p.moveSomewhere();
-//            }
-//
-//        }
+        viewModel.moveOnKeyPressed(scene, player);
 
+        stage.setScene(scene);
+        stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
             int frames = 0;
@@ -98,65 +78,44 @@ public class GameView {
 //                player.calculateMove();
 
                 if (frames % 4 == 0) {
-                    while (!(population.getPopulationFitness() == 1000)) {
-                        System.out.println(frames);
-                        for (Individual individual : population.getPopulation()) {
+//                    outer: while (population.getPopulationFitness() != 1000) {
 
-                            int i = (int) (Math.random() * 4) + 1;
-                            if (i == 1) individual.moveUp();
-                            if (i == 2) individual.moveDown();
-                            if (i == 3) individual.moveLeft();
-                            if (i == 4) individual.moveRight();
-                            individual.calcDistancesToAllObstaclesAndPoint(image);
-//                            individual.calculateMove();
-//                            individual.moveSomewhere();
-//
-                            individual.calculateFitness();
-
-                            if (individual.isDead(obstacles)) {
+                        for (Individual individual : population[0].getPopulation()) {
+                            if (!(individual.isDead(obstacles))) {
+//                                int i = (int) (Math.random() * 4) + 1;
+//                                if (i == 1) individual.moveUp();
+//                                if (i == 2) individual.moveDown();
+//                                if (i == 3) individual.moveLeft();
+//                                if (i == 4) individual.moveRight();
+                                individual.calcDistancesToAllObstaclesAndPoint(image);
+                                individual.calculateMove();
+                                individual.moveSomewhere();
+                            } else {
                                 individual.calculateFitness();
-                                System.out.println("EEEE");
-                                System.out.println(individual.getCenterX());
-                                System.out.println(individual.getCenterY());
                                 root.getChildren().remove(individual);
-                                population.getPopulation().remove(individual);
                             }
 
-
-                            individual.setPointReached(true);
 //                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
-//                        System.out.println(ga.tournamentSelection(population));
 
-//                        if (player.pointObtained(point)){
-//                            root.getChildren().remove(player);
-//                        }
+                            if (individual.pointObtained(point)) {
+                                individual.setPointReached(true);
+                                root.getChildren().remove(individual);
+                            }
+                            if (Collections.disjoint(root.getChildren(), population[0].getPopulation())){ // sprawdzenie czy na planszy jest jakiś osobnik
+                                population[0].setPopulationFitness();
+                                population[0] = ga.makeNewPopulation(population[0]);
+                                population[0] = ga.crossover(population[0]);
+                                population[0] = ga.mutatePopulation(population[0]);
+                                population[0].sortPopulationByFitness();
+                                System.out.println(population[0].getPopulationFitness());
+                            }
                         }
-                        break;
                     }
                 }
-
-
-//                for (Obstacle obstacle : obstacles) {
-//                    for (Individual p : population.getPopulation()) {
-//
-//                        if (p.intersects(obstacle.getLayoutBounds())) {
-//                            root.getChildren().remove(p);
-//                            population.getPopulation().remove(p);
-//                        }
-//                    }
-//                }
-//                if (player.intersects(point.getLayoutBounds()) && !point.isObtained()) {
-//                    root.getChildren().remove(point);
-//                    point.setObtained(true);
-//                }
-            }
+//            }
         };
         timer.start();
 
 
-        viewModel.moveOnKeyPressed(scene, player);
-
-        stage.setScene(scene);
-        stage.show();
     }
 }
