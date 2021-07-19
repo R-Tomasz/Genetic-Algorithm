@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import sample.gui.gameView.GameViewModel;
 import sample.gui.gameView.Player;
 
+import java.util.Arrays;
+
 
 public class Individual extends Player {
     double fitness = 0;
@@ -42,7 +44,7 @@ public class Individual extends Player {
                     setTopDistance((int) this.getCenterY() - y + 25 * -1);
                     break outer;
                 }
-                setTopDistance((int) getCenterY() - 30);
+                setTopDistance((int) getCenterY() - 25);
             }
         }
 //        System.out.println("TOP:  " + topDistance);
@@ -57,7 +59,7 @@ public class Individual extends Player {
                     setLeftDistance((int) this.getCenterX() - x + 25 * -1);
                     break outer;
                 }
-                setLeftDistance((int) getCenterX() - 30);
+                setLeftDistance((int) getCenterX() - 25);
             }
         }
 //        System.out.println("LEFT:  " + leftDistance);
@@ -72,7 +74,7 @@ public class Individual extends Player {
                     setBottomDistance(y - (int) this.getCenterY() - 25);
                     break outer;
                 }
-                setBottomDistance(GameViewModel.sceneHeight - (int) getCenterY() - 30);
+                setBottomDistance(GameViewModel.sceneHeight - (int) getCenterY() - 25);
             }
         }
 //        System.out.println("BOTTOM:  " + bottomDistance);
@@ -87,7 +89,7 @@ public class Individual extends Player {
                     setRightDistance(x - (int) this.getCenterX() - 25);
                     break outer;
                 }
-                setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 30);
+                setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 25);
             }
         }
 //        System.out.println("RIGHT:  " + rightDistance);
@@ -128,7 +130,7 @@ public class Individual extends Player {
         }
     }
 
-    public void setFitness(int fitness) {
+    public void setFitness(double fitness) {
         this.fitness = fitness;
     }
 
@@ -202,8 +204,10 @@ public class Individual extends Player {
         this.genes = genes;
     }
 
-    public void setFirstDimensionGenes(int position, int[] chromosome) {
-        this.getGenes()[position] = chromosome;
+    public void setFirstDimensionGenes(int chromosomePosition, int genePosition, int chromosome) {
+//        System.out.println("-------------");
+//        System.out.println(Arrays.toString(this.getGenes()[position]));
+        this.getGenes()[chromosomePosition][genePosition] = chromosome;
     }
 
     public void setTopDistance(int topDistance) {

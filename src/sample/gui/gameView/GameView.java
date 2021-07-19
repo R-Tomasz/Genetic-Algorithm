@@ -32,10 +32,15 @@ public class GameView {
 //            System.out.println(Arrays.deepToString(p.getGenes()));
 //        }
 
+//        System.out.println("1:  "+ Arrays.deepToString(population.getPopulation().get(0).getGenes()));
+//        System.out.println("2:  "+ Arrays.deepToString(population.getPopulation().get(1).getGenes()));
+//        System.out.println("3:  "+ Arrays.deepToString(population.getPopulation().get(2).getGenes()));
+//        System.out.println("4:  "+ Arrays.deepToString(population.getPopulation().get(3).getGenes()));
+//        System.out.println("5:  "+ Arrays.deepToString(population.getPopulation().get(4).getGenes()));
         Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
         // wygenerowanie przeszkód
-        Obstacle[] obstacles = new Obstacle[40];
+        Obstacle[] obstacles = new Obstacle[15];
         for (int i = 0; i < obstacles.length; i++) {
             obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
             obstacles[i].setX((Math.random() * 901) + 20);
@@ -57,7 +62,6 @@ public class GameView {
         // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
         Image image = pane.snapshot(new SnapshotParameters(), null);
 
-
         viewModel.moveOnKeyPressed(scene, player);
 
         stage.setScene(scene);
@@ -72,11 +76,15 @@ public class GameView {
                 frames++;
                 frames %= 60;
 //                player.calcDistancesToAllObstaclesAndPoint(image);
+//                if (player.isDead(obstacles)){
+//                    System.out.println("BUL");
+//                    root.getChildren().remove(player);
+//                }
 //                player.calculateFitness();
 //                System.out.println(player.getFitness());
 //                player.calculateMove();
 
-                if (frames % 4 == 0) {
+//                if (frames % 1 == 0) {
 //                    outer: while (population.getPopulationFitness() != 1000) {
                     for (int i = 0; i < moves; i++) {
 
@@ -92,6 +100,7 @@ public class GameView {
                                 individual.moveSomewhere();
                             } else {
                                 individual.calculateFitness();
+//                                System.out.println(individual + "     "+individual.getFitness());
                                 root.getChildren().remove(individual);
                             }
 
@@ -103,18 +112,17 @@ public class GameView {
                                 root.getChildren().remove(individual);
                             }
                         }
-                        if (Collections.disjoint(root.getChildren(), population.getPopulation()) || moves % 5 == 0 && moves != 5) { // sprawdzenie czy na planszy jest jakiś osobnik
+                        if (Collections.disjoint(root.getChildren(), population.getPopulation()) || (moves % 5 == 0 && moves != 5)) { // sprawdzenie czy na planszy jest jakiś osobnik
                             population.setPopulationFitness();
                             root.getChildren().removeAll(population.getPopulation());
                             population = ga.makeNewPopulation(population);
                             population = ga.crossover(population);
                             population = ga.mutatePopulation(population);
-                            population.sortPopulationByFitness();
                             root.getChildren().addAll(population.getPopulation());
                         }
                     }
-                }
-                moves++;
+                    moves++;
+//                }
             }
         };
         timer.start();
