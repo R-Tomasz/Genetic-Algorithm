@@ -1,13 +1,11 @@
 package sample;
 
-import java.util.Arrays;
-
 public class GeneticAlgorithm {
     private double mutationRate;
     private double crossoverRate;
 
 
-    //    private final int bestIndividuals = 1;
+        private final int bestIndividuals = 2;
     private final int tournamentKnights = 2;
 
 
@@ -21,14 +19,14 @@ public class GeneticAlgorithm {
     }
     public Individual tournamentSelection(Population population) {
         Population tournament = new Population(population.getPopulation().size());
-//        System.out.println("fit1   "+population.getPopulation().get(0).getFitness());
-//        System.out.println("fit2   "+population.getPopulation().get(1).getFitness());
         for (int i = 0; i < tournamentKnights; i++) {
             int knightPosition = (int) (Math.random() * population.getPopulation().size());
             Individual tournamentIndividual = population.getPopulation().get(knightPosition);
             tournamentIndividual.setFitness(population.getPopulation().get(knightPosition).getFitness());
             tournament.setIndividual(knightPosition, tournamentIndividual);
-//            System.out.println("ryc: " +tournament.getPopulation().get(knightPosition).getFitness());
+//            System.out.println("tournament:  "+tournamentIndividual.getFitness());
+//            System.out.println("population:  "+population.getPopulation().get(knightPosition).getFitness());
+//            tournament.sortPopulationByFitness();
         }
         tournament.sortPopulationByFitness();
         return tournament.getPopulation().get(0);
@@ -48,27 +46,19 @@ public class GeneticAlgorithm {
                 ++forCross;
                 if (forCross % 2 == 0) {
                     Individual parent2 = population.getPopulation().get(i);
-//                    System.out.println("p1: "+ Arrays.deepToString(parent1.getGenes()));
-//                    System.out.println("p2: "+ Arrays.deepToString(parent2.getGenes()));
-//                    System.out.println("offspring1 before: "+ Arrays.deepToString(offspring_1.getGenes()));
-//                    System.out.println("offspring2 before: "+ Arrays.deepToString(offspring_2.getGenes()));
                     for (int j = 0; j < parent1.getGenes().length; j++) {
                         for (int k = 0; k < parent1.getGenes()[j].length; k++) {
                             if (Math.random() < 0.5) {
-//                                System.out.println("pozycja: "+ j + " " + k);
-                                offspring_1.setFirstDimensionGenes(j,k, parent2.getGenes()[j][k]);
-                                offspring_2.setFirstDimensionGenes(j, k, parent1.getGenes()[j][k]);
+                                offspring_1.setSecondDimensionGenes(j,k, parent2.getGenes()[j][k]);
+                                offspring_2.setSecondDimensionGenes(j, k, parent1.getGenes()[j][k]);
                             } else {
-                                offspring_1.setFirstDimensionGenes(j,k, parent1.getGenes()[j][k]);
-                                offspring_2.setFirstDimensionGenes(j,k, parent2.getGenes()[j][k]);
+                                offspring_1.setSecondDimensionGenes(j,k, parent1.getGenes()[j][k]);
+                                offspring_2.setSecondDimensionGenes(j,k, parent2.getGenes()[j][k]);
                             }
                         }
-//                        System.out.println("--------");
                         crossedPopulation.setIndividual(firstParent, offspring_1);
                         crossedPopulation.setIndividual(i, offspring_2);
                     }
-//                    System.out.println("offspring 1 after: "+ Arrays.deepToString(offspring_1.getGenes()));
-//                    System.out.println("offspring 2 after: "+ Arrays.deepToString(offspring_2.getGenes()));
                     firstParent++;
                 } else {
                     firstParent = i;
@@ -86,12 +76,13 @@ public class GeneticAlgorithm {
 
     public Population makeNewPopulation(Population population) {
         Population newPopulation = new Population(population.getPopulation().size());
+        newPopulation.setIndividual(0, population.getPopulation().get(0));
+        newPopulation.setIndividual(1, population.getPopulation().get(1));
 
-        for (int i = 0; i < newPopulation.getPopulation().size(); i++) {
+        for (int i = 2; i < newPopulation.getPopulation().size(); i++) {
             Individual newIndividual = new Individual();
             newIndividual.setGenes(tournamentSelection(population).getGenes());
             newPopulation.setIndividual(i, newIndividual);
-//            System.out.println(i+":  " +Arrays.deepToString(newIndividual.getGenes()));
         }
         return newPopulation;
 
@@ -117,23 +108,6 @@ public class GeneticAlgorithm {
             }
         }
         return mutatedPopulation;
-    }
-
-
-    public void setMutationRate(double mutationRate) {
-        this.mutationRate = mutationRate;
-    }
-
-    public void setCrossoverRate(double crossoverRate) {
-        this.crossoverRate = crossoverRate;
-    }
-
-    public double getMutationRate() {
-        return mutationRate;
-    }
-
-    public double getCrossoverRate() {
-        return crossoverRate;
     }
 
     public int getTournamentKnights() {

@@ -191,9 +191,9 @@ public class Individual extends Player {
 
     public void calculateFitness() {
         setFitness(0);
-        for (int i = 0; i < genes.length; i++) {
+//        for (int i = 0; i < genes.length; i++) {
             setFitness(1000 - (int)distanceToPoint);
-        }
+//        }
     }
 
     public int[][] getGenes() {
@@ -204,9 +204,7 @@ public class Individual extends Player {
         this.genes = genes;
     }
 
-    public void setFirstDimensionGenes(int chromosomePosition, int genePosition, int chromosome) {
-//        System.out.println("-------------");
-//        System.out.println(Arrays.toString(this.getGenes()[position]));
+    public void setSecondDimensionGenes(int chromosomePosition, int genePosition, int chromosome) {
         this.getGenes()[chromosomePosition][genePosition] = chromosome;
     }
 

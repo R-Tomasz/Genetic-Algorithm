@@ -16,8 +16,8 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.25);
-    Population population = ga.initializePopulation(100);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.8, 0.01);
+    Population population = ga.initializePopulation(4);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -65,6 +65,7 @@ public class GameView {
             int movesCounter = 0;
             int availableMoves = 5;
             int generation = 1;
+            int increaseMoves = 0; // zmienna pomocnicza do zwiększania liczby ruchów o 5 co 5 pokoleń
 
             @Override
             public void handle(long now) {
@@ -81,7 +82,6 @@ public class GameView {
 
 
                     for (Individual individual : population.getPopulation()) {
-                        movesCounter++;
                         if (!(individual.isDead(obstacles))) {
 //                                int i = (int) (Math.random() * 4) + 1;
 //                                if (i == 1) individual.moveUp();
@@ -92,29 +92,37 @@ public class GameView {
                             individual.calculateMove();
                             individual.moveSomewhere();
                         } else {
-                            individual.calculateFitness();
+//                            individual.calculateFitness();
                             root.getChildren().remove(individual);
                         }
 
 //                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
 
                         if (individual.pointObtained(point)) {
+
                             System.out.println("WIN");
                             individual.setPointReached(true);
                             root.getChildren().remove(individual);
                         }
+                        movesCounter++;
                     }
                     if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
-                        population.setPopulationFitness();
+                        for(Individual individ : population.getPopulation()){
+                            individ.calculateFitness();
+//                            System.out.println(individ.getFitness());
+                        }
+                        population.sortPopulationByFitness();
                         root.getChildren().removeAll(population.getPopulation());
                         population = ga.makeNewPopulation(population);
+//                        System.out.println(population.getPopulationFitness());
                         population = ga.crossover(population);
                         population = ga.mutatePopulation(population);
                         root.getChildren().addAll(population.getPopulation());
-                        availableMoves+=5;
+
+                        increaseMoves++;
+                        if(increaseMoves%5==0) availableMoves+=5;
+//                        availableMoves+=5;
                         movesCounter = 0;
-                        generation++;
-                        System.out.println(generation);
                     }
                 }
 
