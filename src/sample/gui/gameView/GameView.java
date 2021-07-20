@@ -62,8 +62,9 @@ public class GameView {
 
         AnimationTimer timer = new AnimationTimer() {
             int frames = 0;
-            int temp = 0;
-            int counter = 5;
+            int movesCounter = 0;
+            int availableMoves = 5;
+            int generation = 1;
 
             @Override
             public void handle(long now) {
@@ -80,7 +81,7 @@ public class GameView {
 
 
                     for (Individual individual : population.getPopulation()) {
-                        temp++;
+                        movesCounter++;
                         if (!(individual.isDead(obstacles))) {
 //                                int i = (int) (Math.random() * 4) + 1;
 //                                if (i == 1) individual.moveUp();
@@ -103,16 +104,17 @@ public class GameView {
                             root.getChildren().remove(individual);
                         }
                     }
-                    if (Collections.disjoint(root.getChildren(), population.getPopulation()) || temp % (population.getPopulation().size() * counter) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
+                    if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
                         population.setPopulationFitness();
                         root.getChildren().removeAll(population.getPopulation());
                         population = ga.makeNewPopulation(population);
                         population = ga.crossover(population);
                         population = ga.mutatePopulation(population);
                         root.getChildren().addAll(population.getPopulation());
-                        counter+=5;
-                        temp = 0;
-                        System.out.println(counter);
+                        availableMoves+=5;
+                        movesCounter = 0;
+                        generation++;
+                        System.out.println(generation);
                     }
                 }
 
