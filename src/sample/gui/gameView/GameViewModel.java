@@ -1,12 +1,7 @@
 package sample.gui.gameView;
 
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import sample.GeneticAlgorithm;
-import sample.Individual;
-import sample.Obstacle;
-import sample.Point;
 
 public class GameViewModel {
     GeneticAlgorithm ga;
@@ -17,23 +12,10 @@ public class GameViewModel {
     public static final int sceneHeight = 600;
     public static final int pointX = 950;
     public static final int pointY = 550;
+    public static int moves = 5;
 
-
-    public void moveOnKeyPressed(Scene scene, Player circle /*Individual individual, Image image, Obstacle[] obstacles*/) {
+    public void moveOnKeyPressed(Scene scene, Player circle) {
         scene.setOnKeyPressed(event -> {
-//            switch (event.getCode()){
-//                case F -> {
-//                    individual.calcDistancesToAllObstaclesAndPoint(image);
-//                    individual.calculateMove();
-//                    individual.moveSomewhere();
-//                    if(individual.isDead(obstacles)){
-////                        System.out.println("SIEMA");
-////                        root.getChildren().remove(individual);
-////                        population.getPopulation().remove(individual);
-//                    }
-//                }
-//            }
-
             switch (event.getCode()) {
                 case W -> circle.setCenterY(circle.getCenterY() - movement);
                 case D -> circle.setCenterX(circle.getCenterX() + movement);
@@ -42,6 +24,10 @@ public class GameViewModel {
 
             }
         });
+    }
+
+    public static void increaseMoves(){
+        moves+=5;
     }
 
     public GameViewModel(GeneticAlgorithm ga) {
