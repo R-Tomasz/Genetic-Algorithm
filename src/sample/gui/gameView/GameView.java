@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import sample.*;
@@ -16,8 +17,8 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.8, 0.01);
-    Population population = ga.initializePopulation(4);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.4, 0.01);
+    Population population = ga.initializePopulation(80);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -111,17 +112,16 @@ public class GameView {
                             individ.calculateFitness();
 //                            System.out.println(individ.getFitness());
                         }
-                        population.sortPopulationByFitness();
+                        population.setPopulationFitness();
+                        population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu w selekcji
                         root.getChildren().removeAll(population.getPopulation());
                         population = ga.makeNewPopulation(population);
-//                        System.out.println(population.getPopulationFitness());
                         population = ga.crossover(population);
                         population = ga.mutatePopulation(population);
                         root.getChildren().addAll(population.getPopulation());
 
                         increaseMoves++;
                         if(increaseMoves%5==0) availableMoves+=5;
-//                        availableMoves+=5;
                         movesCounter = 0;
                     }
                 }
