@@ -59,6 +59,10 @@ public class Player extends Circle {
         return individualMovesCounter;
     }
 
+    public boolean isPointReached() {
+        return pointReached;
+    }
+
     public void setPointReached(boolean pointReached) {
         this.pointReached = pointReached;
     }

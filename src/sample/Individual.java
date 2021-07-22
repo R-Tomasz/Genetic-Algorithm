@@ -121,13 +121,13 @@ public class Individual extends Player {
 
     public void moveSomewhere() {
 
-        double min = chancesForDirections[0];
+        double min = Math.abs(chancesForDirections[0]);
 
         int temp = 0;
         for (int i = 1; i < chancesForDirections.length; i++) {
-            if (chancesForDirections[i] < min) {
+            if (Math.abs(chancesForDirections[i]) < min) {
                 temp = i;
-                min = chancesForDirections[i];
+                min = Math.abs(chancesForDirections[i]);
 //                System.out.println("-------------");
 //                System.out.println("GORA:  "+chancesForDirections[0]);
 //                System.out.println("LEWO:  "+chancesForDirections[1]);
@@ -215,11 +215,16 @@ public class Individual extends Player {
 
     public void calculateFitness() {
         setFitness(0);
+        double multiplier = 1;
+        if(this.isPointReached()) multiplier = 1.3;
 
         int effectiveMove = (int) ((Math.sqrt((GameViewModel.pointX - 50) * (GameViewModel.pointX - 50) + (GameViewModel.pointY - 50) * (GameViewModel.pointY - 50))) / this.getIndividualMovesCounter() );
-        System.out.println(effectiveMove);
-        setFitness(1002 - (int) distanceToPoint + effectiveMove);
+        setFitness((1002 - (int) distanceToPoint + effectiveMove) * multiplier);
 //
+//        System.out.println("ubogi: " + (1002 - (int) distanceToPoint));
+//        System.out.println("effective: "+effectiveMove);
+//        System.out.println("fitnes: "+this.getFitness());
+//        System.out.println("------");
     }
 
     public int[][] getGenes() {

@@ -48,6 +48,10 @@ public class GeneticAlgorithm {
     }
 
     public Population crossover(Population population) {
+//        System.out.println("POPULATION BEFORE");
+//        for(int i = 0 ; i < population.getPopulation().size(); i++){
+//            System.out.println("pop at " + i+ ": "+Arrays.deepToString(population.getPopulation().get(i).getGenes()));
+//        }
         Population crossedPopulation = new Population(population.getPopulation().size());
         int forCross = 0, firstParent = 0;
 //        crossedPopulation.setIndividual(0, population.getPopulation().get(0));
@@ -60,17 +64,22 @@ public class GeneticAlgorithm {
             Individual parent1 = population.getPopulation().get(firstParent);
 
             if (Math.random() < crossoverRate) {
+//                System.out.println("cross at: " + i);
                 Individual offspring_1 = new Individual();
                 Individual offspring_2 = new Individual();
                 ++forCross;
                 if (forCross % 2 == 0) {
                     Individual parent2 = population.getPopulation().get(i);
+//                    System.out.println("parent1: "+Arrays.deepToString(parent1.getGenes()));
+//                    System.out.println("parent2: "+Arrays.deepToString(parent2.getGenes()));
                     for (int j = 0; j < parent1.getGenes().length; j++) {
                         for (int k = 0; k < parent1.getGenes()[j].length; k++) {
                             if (Math.random() < 0.5) {
+//                                System.out.println("flup at: " + k);
                                 offspring_1.setSecondDimensionGenes(j, k, parent2.getGenes()[j][k]);
                                 offspring_2.setSecondDimensionGenes(j, k, parent1.getGenes()[j][k]);
                             } else {
+//                                System.out.println("no flip at: "+k);
                                 offspring_1.setSecondDimensionGenes(j, k, parent1.getGenes()[j][k]);
                                 offspring_2.setSecondDimensionGenes(j, k, parent2.getGenes()[j][k]);
                             }
@@ -78,6 +87,8 @@ public class GeneticAlgorithm {
                         crossedPopulation.setIndividual(firstParent, offspring_1);
                         crossedPopulation.setIndividual(i, offspring_2);
                     }
+//                    System.out.println("offspring1: "+Arrays.deepToString(offspring_1.getGenes()));
+//                    System.out.println("offspring2: "+Arrays.deepToString(offspring_2.getGenes()));
                     firstParent++;
                 } else {
                     firstParent = i;
@@ -90,6 +101,10 @@ public class GeneticAlgorithm {
 //            System.out.println("fp "+firstParent);
             crossedPopulation.setIndividual(firstParent, population.getPopulation().get(firstParent));
         }
+//        System.out.println("POPULATION AFTER");
+//        for(int i = 0 ; i < population.getPopulation().size(); i++){
+//            System.out.println("pop at " + i+ ": "+Arrays.deepToString(crossedPopulation.getPopulation().get(i).getGenes()));
+//        }
         return crossedPopulation;
     }
 

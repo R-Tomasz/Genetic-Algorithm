@@ -11,14 +11,15 @@ import javafx.stage.Stage;
 
 import sample.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.4, 0.01);
-    Population population = ga.initializePopulation(16);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.25, 0.01);
+    Population population = ga.initializePopulation(60);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -64,7 +65,7 @@ public class GameView {
         AnimationTimer timer = new AnimationTimer() {
             int frames = 0;
             int movesCounter = 0;
-            int availableMoves = 5;
+            int availableMoves = 50;
             int generation = 1;
             int increaseMoves = 0; // zmienna pomocnicza do zwiększania liczby ruchów o 5 co 5 pokoleń
 
@@ -115,7 +116,7 @@ public class GameView {
                             individ.calculateFitness();
 //                            System.out.println(individ.getIndividualMovesCounter());
                         }
-                        population.setPopulationFitness();
+//                        population.setPopulationFitness();
                         population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu w selekcji
                         root.getChildren().removeAll(population.getPopulation());
                         population = ga.makeNewPopulation(population);
