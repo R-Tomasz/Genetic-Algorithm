@@ -18,7 +18,7 @@ public class GameView {
     private final GameViewModel viewModel;
 
     GeneticAlgorithm ga = new GeneticAlgorithm(0.4, 0.01);
-    Population population = ga.initializePopulation(80);
+    Population population = ga.initializePopulation(16);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -94,6 +94,7 @@ public class GameView {
                             individual.moveSomewhere();
                         } else {
 //                            individual.calculateFitness();
+                            individual.setFill(Color.CRIMSON);
                             root.getChildren().remove(individual);
                         }
 
@@ -105,12 +106,14 @@ public class GameView {
                             individual.setPointReached(true);
                             root.getChildren().remove(individual);
                         }
+                        individual.individualMovesCounter +=1;
+//                        System.out.println("moves: "+individual.individualMovesCounter);
                         movesCounter++;
                     }
                     if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
                         for(Individual individ : population.getPopulation()){
                             individ.calculateFitness();
-//                            System.out.println(individ.getFitness());
+//                            System.out.println(individ.getIndividualMovesCounter());
                         }
                         population.setPopulationFitness();
                         population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu w selekcji
@@ -119,9 +122,8 @@ public class GameView {
                         population = ga.crossover(population);
                         population = ga.mutatePopulation(population);
                         root.getChildren().addAll(population.getPopulation());
-
                         increaseMoves++;
-                        if(increaseMoves%5==0) availableMoves+=5;
+                        if(increaseMoves%5==0) availableMoves+=10;
                         movesCounter = 0;
                     }
                 }

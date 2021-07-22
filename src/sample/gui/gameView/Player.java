@@ -7,6 +7,7 @@ import sample.Point;
 
 public class Player extends Circle {
     boolean pointReached;
+    public int individualMovesCounter =0;
 
     public Player(int positionX, int positionY, double radius) {
         super(positionX, positionY, radius);
@@ -48,6 +49,14 @@ public class Player extends Circle {
     public boolean pointObtained(Point point){
         Shape intersect = Shape.intersect(this, point);
         return intersect.getBoundsInLocal().getWidth() != -1; // jeżeli istnieje, znaczy że była kolizja
+    }
+
+    public void setIndividualMovesCounter(int individualMovesCounter) {
+        this.individualMovesCounter = individualMovesCounter;
+    }
+
+    public int getIndividualMovesCounter() {
+        return individualMovesCounter;
     }
 
     public void setPointReached(boolean pointReached) {

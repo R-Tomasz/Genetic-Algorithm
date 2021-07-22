@@ -23,13 +23,18 @@ public class GeneticAlgorithm {
     }
 
     public Individual tournamentSelection(Population population) {
+        for(int i = 0 ; i < population.getPopulation().size(); i++){
+//            System.out.println("pop at " + i+ ": "+Arrays.deepToString(population.getPopulation().get(i).getGenes()));
+        }
         Population tournament = new Population(population.getPopulation().size());
         for (int i = 0; i < tournamentKnights; i++) {
             int knightPosition = (int) (Math.random() * population.getPopulation().size());
 //            System.out.println("knight pos: "+knightPosition);
             Individual tournamentIndividual = population.getPopulation().get(knightPosition);
             tournamentIndividual.setFitness(population.getPopulation().get(knightPosition).getFitness());
+//            System.out.println("knight fit: "+ tournamentIndividual.getFitness());
             tournament.setIndividual(knightPosition, tournamentIndividual);
+//            System.out.println("KNIGHT GENEES: "+Arrays.deepToString(tournamentIndividual.getGenes()));
 //            System.out.println("tournament:  "+tournamentIndividual.getFitness());
 //            tournament.sortPopulationByFitness();
         }
@@ -38,6 +43,7 @@ public class GeneticAlgorithm {
 //            System.out.println(i+" fit: " +tournament.getPopulation().get(i).getFitness());
 //        }
 //        System.out.println("----");
+//        System.out.println("WINNER: "+Arrays.deepToString(tournament.getPopulation().get(0).getGenes()));
         return tournament.getPopulation().get(0);
     }
 
@@ -94,12 +100,16 @@ public class GeneticAlgorithm {
 //        newPopulation.getPopulation().get(0).setFitness(population.getPopulation().get(0).getFitness());
 //        newPopulation.getPopulation().get(1).setFitness(population.getPopulation().get(1).getFitness());
 
+//        System.out.println("POPULATION BEFORE TOURNAMENT");
         for (int i = 0; i < population.getPopulation().size(); i++) {
             Individual newIndividual = new Individual();
             newIndividual.setGenes(tournamentSelection(population).getGenes());
             newPopulation.setIndividual(i, newIndividual);
         }
-
+//        System.out.println("POPULATION AFTER TOURNAMENT");
+//        for(int i = 0 ; i < newPopulation.getPopulation().size(); i++){
+//            System.out.println("pop at " + i+ ": "+Arrays.deepToString(newPopulation.getPopulation().get(i).getGenes()));
+//        }
         return newPopulation;
 
     }
@@ -112,10 +122,13 @@ public class GeneticAlgorithm {
 //        mutatedPopulation.getPopulation().get(1).setFitness(population.getPopulation().get(1).getFitness());
 
         for (int i = 0; i < population.getPopulation().size(); i++) {
+//            System.out.println("pop size: "+population.getPopulation().size());
             for (int j = 0; j < population.getPopulation().get(i).getGenes().length; j++) {
+//                System.out.println("ilosc genow: "+population.getPopulation().get(i).getGenes().length);
                 if (Math.random() <= mutationRate) {
 
-                    int mutationPosition = (int) (Math.random() * (population.getPopulation().get(j).getGenes()[0].length));
+                    int mutationPosition = (int) (Math.random() * (population.getPopulation().get(i).getGenes()[0].length));
+//                    System.out.println("pozycja mutacji: " +mutationPosition);
 //                    System.out.println("pos: " + mutationPosition);
 //                    System.out.println("gene before: " + Arrays.deepToString(mutatedPopulation.getPopulation().get(i).getGenes()));
                         if (mutatedPopulation.getPopulation().get(i).getGenes()[j][mutationPosition] == 0)

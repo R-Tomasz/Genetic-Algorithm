@@ -16,12 +16,16 @@ public class Individual extends Player {
     private int bottomDistance;
     private int rightDistance;
 
+    private int xDistanceToPoint;
+    private int yDistanceToPoint;
+
+
     private double distanceToPoint;
 
-    int[][] genes = new int[16][8]; // tablica dwuwymiarowa osobnika z 16 ciągami bitów, po 8 bitów każdy
+    int[][] genes = new int[24][8]; // tablica dwuwymiarowa osobnika z 16 ciągami bitów, po 8 bitów każdy
 
-    String[] stringGenes = new String[16]; // ciąg bitów reprezentowany w formie tekstowej
-    public double[] parameters = new double[16]; // wyliczone z decimal values parametry od -1 do 1
+    String[] stringGenes = new String[24]; // ciąg bitów reprezentowany w formie tekstowej
+    public double[] parameters = new double[24]; // wyliczone z decimal values parametry od -1 do 1
 
 
     double[] chancesForDirections = new double[4]; // "szanse" dla gracza na pójście w kierunkach kolejno WASD
@@ -99,11 +103,19 @@ public class Individual extends Player {
         setDistanceToPoint((Math.sqrt((GameViewModel.pointX - this.getCenterX()) * (GameViewModel.pointX - this.getCenterX()) + (GameViewModel.pointY - this.getCenterY()) * (GameViewModel.pointY - this.getCenterY()))) - 55);
     }
 
+    public void calcXYPointDistances() {
+        this.setxDistanceToPoint((int) (GameViewModel.pointX - this.getCenterX()));
+        this.setyDistanceToPoint((int) (GameViewModel.pointY - this.getCenterY()));
+//        System.out.println("X: " +this.getxDistanceToPoint());
+//        System.out.println("Y: " +this.getyDistanceToPoint());
+    }
+
     public void calcDistancesToAllObstaclesAndPoint(Image img) {
         calcTopDistance(img);
         calcLeftDistance(img);
         calcBottomDistance(img);
         calcRightDistance(img);
+        calcXYPointDistances();
         calcPointDistance();
     }
 
@@ -115,6 +127,7 @@ public class Individual extends Player {
         for (int i = 1; i < chancesForDirections.length; i++) {
             if (chancesForDirections[i] < min) {
                 temp = i;
+                min = chancesForDirections[i];
 //                System.out.println("-------------");
 //                System.out.println("GORA:  "+chancesForDirections[0]);
 //                System.out.println("LEWO:  "+chancesForDirections[1]);
@@ -123,10 +136,10 @@ public class Individual extends Player {
             }
         }
         switch (temp) {
-            case (0) -> moveUp();
-            case (1) -> moveLeft();
-            case (2) -> moveDown();
-            case (3) -> moveRight();
+            case 0 -> moveUp();
+            case 1 -> moveLeft();
+            case 2 -> moveDown();
+            case 3 -> moveRight();
         }
     }
 
@@ -150,7 +163,7 @@ public class Individual extends Player {
 
     public void calculateValueFromGene() { // zamiana z ciągu binarnego na system dziesiętny oraz wyliczenie wartości dziesiętnych (parametrów)
         geneIntToString();
-        int[] decimalValues = new int[16]; // ciągi bitów zamienione na system dziesiętny
+        int[] decimalValues = new int[24]; // ciągi bitów zamienione na system dziesiętny
 
         for (int i = 0; i < stringGenes.length; i++) {
             decimalValues[i] = Integer.parseInt(stringGenes[i], 2); // parsowanie z ciągu binarnego typu string na system dziesiętny
@@ -167,6 +180,8 @@ public class Individual extends Player {
         double[] left = new double[4];
         double[] down = new double[4];
         double[] right = new double[4];
+        double[] xToPoint = new double[4];
+        double[] yToPoint = new double[4];
         int temp = 0;
 
         for (int i = 0; i < chancesForDirections.length; i++) {
@@ -174,21 +189,36 @@ public class Individual extends Player {
             left[i] = (double) distancesToObstacles[1] * parameters[temp + 1];
             down[i] = (double) distancesToObstacles[2] * parameters[temp + 2];
             right[i] = (double) distancesToObstacles[3] * parameters[temp + 3];
-            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i];
-            temp += 4;
+            xToPoint[i] = (double) getxDistanceToPoint() * parameters[temp + 4];
+            yToPoint[i] = (double) getyDistanceToPoint() * parameters[temp + 5];
+            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] + yToPoint[i];
+            temp += 6;
 //            System.out.println("----------------------------");
-//            System.out.println("TOP:  " + chancesForDirections[0]);
-//            System.out.println("LEFT:  " + chancesForDirections[1]);
-//            System.out.println("BOTTOM:  " + chancesForDirections[2]);
-//            System.out.println("RIGHT:  " + chancesForDirections[3]);
-            if (temp == 16) break;
+//            System.out.println("genes: "+Arrays.deepToString(getGenes()));
+//            System.out.println("string genes: "+ Arrays.toString(stringGenes));
+//            System.out.println("parameters: "+ Arrays.toString(parameters));
+//            System.out.println("distance top: " +distancesToObstacles[0]);
+//            System.out.println("distance left: " +distancesToObstacles[1]);
+//            System.out.println("distance down: " +distancesToObstacles[2]);
+//            System.out.println("distance right: " +distancesToObstacles[3]);
+//            System.out.println("distance X: "+ (double) getxDistanceToPoint());
+//            System.out.println("distance Y: "+ (double) getyDistanceToPoint());
+//            System.out.println("chance top: " + chancesForDirections[0]);
+//            System.out.println("chance left: " + chancesForDirections[1]);
+//            System.out.println("chance down: " + chancesForDirections[2]);
+//            System.out.println("chance right: " + chancesForDirections[3]);
+
+            if (temp == 24) break;
         }
     }
 
 
     public void calculateFitness() {
         setFitness(0);
-        setFitness(1002 - (int) distanceToPoint);
+
+        int effectiveMove = (int) ((Math.sqrt((GameViewModel.pointX - 50) * (GameViewModel.pointX - 50) + (GameViewModel.pointY - 50) * (GameViewModel.pointY - 50))) / this.getIndividualMovesCounter() );
+        System.out.println(effectiveMove);
+        setFitness(1002 - (int) distanceToPoint + effectiveMove);
 //
     }
 
@@ -238,6 +268,22 @@ public class Individual extends Player {
 
     public int getRightDistance() {
         return rightDistance;
+    }
+
+    public int getxDistanceToPoint() {
+        return xDistanceToPoint;
+    }
+
+    public int getyDistanceToPoint() {
+        return yDistanceToPoint;
+    }
+
+    public void setxDistanceToPoint(int xDistanceToPoint) {
+        this.xDistanceToPoint = xDistanceToPoint;
+    }
+
+    public void setyDistanceToPoint(int yDistanceToPoint) {
+        this.yDistanceToPoint = yDistanceToPoint;
     }
 
     public double getDistanceToPoint() {
