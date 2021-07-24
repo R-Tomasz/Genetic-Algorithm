@@ -26,9 +26,6 @@ public class GameViewModel {
         });
     }
 
-    public static void increaseMoves(){
-        moves+=5;
-    }
 
     public GameViewModel(GeneticAlgorithm ga) {
         this.ga = ga;
