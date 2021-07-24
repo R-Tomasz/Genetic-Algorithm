@@ -112,8 +112,6 @@ public class Individual extends Player {
     public void calcXYPointDistances() {
         this.setxDistanceToPoint((int) (GameViewModel.pointX - this.getCenterX()));
         this.setyDistanceToPoint((int) (GameViewModel.pointY - this.getCenterY()));
-//        System.out.println("X: " +this.getxDistanceToPoint());
-//        System.out.println("Y: " +this.getyDistanceToPoint());
     }
 
     public void calcDistancesToAllObstaclesAndPoint(Image img) {
@@ -134,11 +132,6 @@ public class Individual extends Player {
             if (Math.abs(chancesForDirections[i]) < min) {
                 temp = i;
                 min = Math.abs(chancesForDirections[i]);
-//                System.out.println("-------------");
-//                System.out.println("GORA:  "+chancesForDirections[0]);
-//                System.out.println("LEWO:  "+chancesForDirections[1]);
-//                System.out.println("DOL:  "+chancesForDirections[2]);
-//                System.out.println("PRAWO:  "+chancesForDirections[3]);
             }
         }
         switch (temp) {
@@ -199,20 +192,6 @@ public class Individual extends Player {
             yToPoint[i] = (double) getyDistanceToPoint() * parameters[temp + 5];
             chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] + yToPoint[i];
             temp += 6;
-//            System.out.println("----------------------------");
-//            System.out.println("genes: "+Arrays.deepToString(getGenes()));
-//            System.out.println("string genes: "+ Arrays.toString(stringGenes));
-//            System.out.println("parameters: "+ Arrays.toString(parameters));
-//            System.out.println("distance top: " +distancesToObstacles[0]);
-//            System.out.println("distance left: " +distancesToObstacles[1]);
-//            System.out.println("distance down: " +distancesToObstacles[2]);
-//            System.out.println("distance right: " +distancesToObstacles[3]);
-//            System.out.println("distance X: "+ (double) getxDistanceToPoint());
-//            System.out.println("distance Y: "+ (double) getyDistanceToPoint());
-//            System.out.println("chance top: " + chancesForDirections[0]);
-//            System.out.println("chance left: " + chancesForDirections[1]);
-//            System.out.println("chance down: " + chancesForDirections[2]);
-//            System.out.println("chance right: " + chancesForDirections[3]);
 
             if (temp == 24) break;
         }
@@ -226,11 +205,6 @@ public class Individual extends Player {
 
         int effectiveMove = (int) ((Math.sqrt((GameViewModel.pointX - 50) * (GameViewModel.pointX - 50) + (GameViewModel.pointY - 50) * (GameViewModel.pointY - 50))) / this.getIndividualMovesCounter() );
         setFitness((1002 - (int) distanceToPoint + effectiveMove) * multiplier);
-//
-//        System.out.println("ubogi: " + (1002 - (int) distanceToPoint));
-//        System.out.println("effective: "+effectiveMove);
-//        System.out.println("fitnes: "+this.getFitness());
-//        System.out.println("------");
     }
 
     public int[][] getGenes() {
