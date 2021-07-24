@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import sample.*;
@@ -18,8 +17,8 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.25, 0.01);
-    Population population = new Population(60);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.6, 0.01);
+    Population population = new Population(80);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -51,7 +50,6 @@ public class GameView {
         root.getChildren().add(point);
 
         Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
-//        System.out.println(points.get(0).getLayoutBounds());
 
         // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
         Image image = pane.snapshot(new SnapshotParameters(), null);
@@ -63,71 +61,53 @@ public class GameView {
 
 
         AnimationTimer timer = new AnimationTimer() {
-            int frames = 0;
             int movesCounter = 0;
-            int availableMoves = 50;
-            int generation = 1;
+            int availableMoves = 5;
             int increaseMoves = 0; // zmienna pomocnicza do zwiększania liczby ruchów o 5 co 5 pokoleń
 
             @Override
             public void handle(long now) {
-//                frames++;
-//                frames %= 60;
-//                player.calcDistancesToAllObstaclesAndPoint(image);
-//                if (player.isDead(obstacles)){
-//                    System.out.println("BUL");
-//                    root.getChildren().remove(player);
-//                }
-//                player.calculateFitness();
-//                System.out.println(player.getFitness());
-//                player.calculateMove();
+                    for (Individual individual : population.getPopulation()) {
+                        if (!(individual.isDead(obstacles))) {
+                            individual.calcDistancesToAllObstaclesAndPoint(image);
+                            individual.calculateMove();
+                            individual.moveSomewhere();
+                        } else {
+                            root.getChildren().remove(individual);
+                        }
 
-
-                for (Individual individual : population.getPopulation()) {
-                    if (!(individual.isDead(obstacles))) {
-//                                int i = (int) (Math.random() * 4) + 1;
-//                                if (i == 1) individual.moveUp();
-//                                if (i == 2) individual.moveDown();
-//                                if (i == 3) individual.moveLeft();
-//                                if (i == 4) individual.moveRight();
-                        individual.calcDistancesToAllObstaclesAndPoint(image);
-                        individual.calculateMove();
-                        individual.moveSomewhere();
-                    } else {
-//                            individual.calculateFitness();
-                        individual.setFill(Color.CRIMSON);
-                        root.getChildren().remove(individual);
+                        if (individual.pointObtained(point)) {
+                            System.out.println("WIN");
+                            individual.setPointReached(true);
+                            root.getChildren().remove(individual);
+                        }
+                        individual.individualMovesCounter +=1;
+                        movesCounter++;
                     }
+                    if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
+                        for(Individual individ : population.getPopulation()){
+                            individ.calculateFitness();
+                        }
+                        population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu
+                        root.getChildren().removeAll(population.getPopulation());
+                        population = ga.makeNewPopulation(population);
+                        population = ga.crossover(population);
 
-//                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
+                        population = ga.mutatePopulation(population);
+                        for(int i = 0 ;i < population.getPopulation().size();i++){
+                            System.out.println("i: " + i + " " + Arrays.deepToString(population.getPopulation().get(i).getGenes()));
+                        }
+                        System.out.println("---");
+                        root.getChildren().addAll(population.getPopulation());
 
-                    if (individual.pointObtained(point)) {
+//
+//                        increaseMoves++;
+//                        if(increaseMoves%5==0)
+                            availableMoves+=10;
+                        movesCounter = 0;
 
-                        System.out.println("WIN");
-                        individual.setPointReached(true);
-                        root.getChildren().remove(individual);
                     }
-                    individual.individualMovesCounter +=1;
-//                        System.out.println("moves: "+individual.individualMovesCounter);
-                    movesCounter++;
                 }
-                if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
-                    for(Individual individ : population.getPopulation()){
-                        individ.calculateFitness();
-//                            System.out.println(individ.getIndividualMovesCounter());
-                    }
-//                        population.setPopulationFitness();
-                    population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu w selekcji
-                    root.getChildren().removeAll(population.getPopulation());
-                    population = ga.makeNewPopulation(population);
-                    population = ga.crossover(population);
-                    population = ga.mutatePopulation(population);
-                    root.getChildren().addAll(population.getPopulation());
-                    increaseMoves++;
-                    if(increaseMoves%5==0) availableMoves+=10;
-                    movesCounter = 0;
-                }
-            }
 
         };
         timer.start();
