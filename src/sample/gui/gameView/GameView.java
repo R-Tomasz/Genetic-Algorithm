@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import sample.*;
@@ -18,8 +17,8 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.25, 0.01);
-    Population population = ga.initializePopulation(60);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.4, 0.01);
+    Population population = new Population(10);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -63,10 +62,9 @@ public class GameView {
 
 
         AnimationTimer timer = new AnimationTimer() {
-            int frames = 0;
             int movesCounter = 0;
-            int availableMoves = 50;
-            int generation = 1;
+            int availableMoves = 5;
+//            int generation = 1;
             int increaseMoves = 0; // zmienna pomocnicza do zwiększania liczby ruchów o 5 co 5 pokoleń
 
             @Override
@@ -94,27 +92,21 @@ public class GameView {
                             individual.calculateMove();
                             individual.moveSomewhere();
                         } else {
-//                            individual.calculateFitness();
-                            individual.setFill(Color.CRIMSON);
+//                            individual.setFill(Color.CRIMSON);
                             root.getChildren().remove(individual);
                         }
 
-//                        viewModel.moveOnKeyPressed(scene, individual, image, obstacles);
-
                         if (individual.pointObtained(point)) {
-
                             System.out.println("WIN");
                             individual.setPointReached(true);
                             root.getChildren().remove(individual);
                         }
                         individual.individualMovesCounter +=1;
-//                        System.out.println("moves: "+individual.individualMovesCounter);
                         movesCounter++;
                     }
                     if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
                         for(Individual individ : population.getPopulation()){
                             individ.calculateFitness();
-//                            System.out.println(individ.getIndividualMovesCounter());
                         }
 //                        population.setPopulationFitness();
                         population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu w selekcji
@@ -123,9 +115,16 @@ public class GameView {
                         population = ga.crossover(population);
                         population = ga.mutatePopulation(population);
                         root.getChildren().addAll(population.getPopulation());
+
+                        for(Individual individ : population.getPopulation()){
+                            System.out.println(Arrays.deepToString(individ.getGenes()));
+                        }
+//                        System.out.println("STOP");
+
                         increaseMoves++;
                         if(increaseMoves%5==0) availableMoves+=10;
                         movesCounter = 0;
+
                     }
                 }
 

@@ -7,6 +7,9 @@ public class Population {
     int populationFitness;
     ArrayList<Individual> population;
 
+    public Population(){
+        population = new ArrayList<>();
+    }
 
     public Population(int size) {
         //super((double) GameViewModel.sceneWidth/2, (double)GameViewModel.sceneHeight/2, GameViewModel.playerRadius);
@@ -45,6 +48,17 @@ public class Population {
         }
         this.populationFitness = temp / this.getPopulation().size();
     }
+
+//    public Individual getFittest(){
+//        Individual fittest = this.getPopulation().get(0);
+//        fittest.setFitness(this.getPopulation().get(0).getFitness());
+//        for(int i = 0 ; i< this.getPopulation().size();i++){
+//            if(this.getPopulation().get(i).getFitness() > fittest.getFitness()){
+//                fittest = this.getPopulation().get(i);
+//            }
+//        }
+//        return fittest;
+//    }
 
     public int getPopulationFitness() {
         return populationFitness;

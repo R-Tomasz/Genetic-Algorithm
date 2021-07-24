@@ -30,6 +30,12 @@ public class Individual extends Player {
 
     double[] chancesForDirections = new double[4]; // "szanse" dla gracza na pójście w kierunkach kolejno WASD
 
+    public Individual(int[][] genes){
+        super(50, 50, GameViewModel.playerRadius);
+        for (int i = 0; i < genes.length; i++) {
+            System.arraycopy(genes[i], 0, this.genes[i], 0, genes[i].length);
+        }
+    }
 
     public Individual() {
         super(50, 50, GameViewModel.playerRadius);
