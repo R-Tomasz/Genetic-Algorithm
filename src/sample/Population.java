@@ -12,27 +12,20 @@ public class Population {
     }
 
     public Population(int size) {
-        //super((double) GameViewModel.sceneWidth/2, (double)GameViewModel.sceneHeight/2, GameViewModel.playerRadius);
         population = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             population.add(new Individual());
         }
-//        sortPopulationByFitness();
     }
 
     public void sortPopulationByFitness() {
+        //sortowanie populacji na podstawie przystosowania osobników
         population.sort(Comparator.comparing(Individual::getFitness).reversed());
-//        population.sort(Comparator.comparing(Individual::calculateFitness).reversed());
     }
 
     public ArrayList<Individual> getPopulation() {
         return population;
     }
-
-    public void setIndividual(int position, Individual individual) {
-        population.set(position, individual);
-    }
-
 
     @Override
     public String toString() {
@@ -49,18 +42,4 @@ public class Population {
         this.populationFitness = temp / this.getPopulation().size();
     }
 
-//    public Individual getFittest(){
-//        Individual fittest = this.getPopulation().get(0);
-//        fittest.setFitness(this.getPopulation().get(0).getFitness());
-//        for(int i = 0 ; i< this.getPopulation().size();i++){
-//            if(this.getPopulation().get(i).getFitness() > fittest.getFitness()){
-//                fittest = this.getPopulation().get(i);
-//            }
-//        }
-//        return fittest;
-//    }
-
-    public int getPopulationFitness() {
-        return populationFitness;
-    }
 }

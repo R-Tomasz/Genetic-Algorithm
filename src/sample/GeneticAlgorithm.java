@@ -32,11 +32,13 @@ public class GeneticAlgorithm {
 
     public Population crossover(Population population) {
         Population crossedPopulation = new Population();
-        crossedPopulation.getPopulation().add(population.getPopulation().get(0));
-        crossedPopulation.getPopulation().add(population.getPopulation().get(1));
+        crossedPopulation.getPopulation().add(new Individual(population.getPopulation().get(0).getGenes()));
+        crossedPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
 
-        for (int i = 2; i < population.getPopulation().size(); i++) {
-            Individual parent1 = population.getPopulation().get(i); // rodzic to osobnik z początkowej populacji o indeksie i
+        for (int i = 0; i < population.getPopulation().size()-2; i++) {
+
+            // rodzic to osobnik z początkowej populacji o indeksie i
+            Individual parent1 = population.getPopulation().get(i);
             if (Math.random() < crossoverRate && i != population.getPopulation().size()-1) { // jeżeli wylosowało krzyżowanie i indeks pierwszego rodzica nie jest ostantim w populacji
                 Individual parent2 = population.getPopulation().get(i+1);
 
@@ -72,16 +74,15 @@ public class GeneticAlgorithm {
     public Population makeNewPopulation(Population population) {
         Population newPopulation = new Population();
 
-
         //przepisanie najlepszych osobników do nowej populacji
-        newPopulation.getPopulation().add(population.getPopulation().get(0));
-        newPopulation.getPopulation().add(population.getPopulation().get(1));
+        newPopulation.getPopulation().add(new Individual(population.getPopulation().get(0).getGenes()));
+        newPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
 
         for (int i = 2; i < population.getPopulation().size(); i++) {
             //nowy osobnik przejmie geny zwyciężcy turnieju
-            Individual winner = tournamentSelection(population);
-            Individual newIndividual = new Individual(winner.getGenes());
-            newIndividual.setFitness(winner.getFitness());
+//            Individual winner = tournamentSelection(population);
+            Individual newIndividual = new Individual(tournamentSelection(population).getGenes());
+//            newIndividual.setFitness(winner.getFitness());
             newPopulation.getPopulation().add(newIndividual);
         }
         newPopulation.sortPopulationByFitness();
@@ -91,10 +92,10 @@ public class GeneticAlgorithm {
 
     public Population mutatePopulation(Population population) {
         Population mutatedPopulation = new Population();
-        mutatedPopulation.getPopulation().add(population.getPopulation().get(0));
-        mutatedPopulation.getPopulation().add(population.getPopulation().get(1));
+        mutatedPopulation.getPopulation().add(new Individual(population.getPopulation().get(0).getGenes()));
+        mutatedPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
         for (int i = 2; i < population.getPopulation().size(); i++) {
-            // wstępne przepisanie osobnika z wstępnej populacji
+            // wstępne przepisanie osobnika z wejściowej populacji
             mutatedPopulation.getPopulation().add(population.getPopulation().get(i));
 
             for (int j = 0; j < population.getPopulation().get(i).getGenes().length; j++) {

@@ -6,32 +6,40 @@ import javafx.scene.paint.Color;
 import sample.gui.gameView.GameViewModel;
 import sample.gui.gameView.Player;
 
-import java.util.Arrays;
-
-
 public class Individual extends Player {
     double fitness = 0;
+
+    //odległości od przeszkód w 4 kierunkach
     private int topDistance;
     private int leftDistance;
     private int bottomDistance;
     private int rightDistance;
 
+    //odległości od punktu w osiach X i Y
     private int xDistanceToPoint;
     private int yDistanceToPoint;
 
-
+    //odległość od punktu
     private double distanceToPoint;
 
-    int[][] genes = new int[24][8]; // tablica dwuwymiarowa osobnika z 16 ciągami bitów, po 8 bitów każdy
+    // tablica dwuwymiarowa osobnika z 24 ciągami bitów, po 8 bitów każdy
+    // wielkość 24 to 6 danych wejściowych, czyli 4 odległości od przeszkód i 2 odległości od punktu przemnożone przez 4 możliwości ruchu
+    // tak więc (4+2)*4 = 24
+    int[][] genes = new int[24][8];
 
-    String[] stringGenes = new String[24]; // ciąg bitów reprezentowany w formie tekstowej
-    public double[] parameters = new double[24]; // wyliczone z decimal values parametry od -1 do 1
+    // ciąg bitów reprezentowany w formie tekstowej
+    String[] stringGenes = new String[24];
 
+    // wyliczone z ciągów bitów parametry od -1 do 1
+    public double[] parameters = new double[24];
 
-    double[] chancesForDirections = new double[4]; // "szanse" dla gracza na pójście w kierunkach kolejno WASD
+    // "szanse" dla gracza na pójście w kierunkach kolejno góra lewo dół prawo
+    double[] chancesForDirections = new double[4];
 
-    public Individual(int[][] genes){
+    public Individual(int[][] genes) {
         super(50, 50, GameViewModel.playerRadius);
+
+        //inicjalizacja osobnika gotowym zbiorem genów
         for (int i = 0; i < genes.length; i++) {
             System.arraycopy(genes[i], 0, this.genes[i], 0, genes[i].length);
         }
@@ -39,6 +47,8 @@ public class Individual extends Player {
 
     public Individual() {
         super(50, 50, GameViewModel.playerRadius);
+
+        //wylosowanie ośmiu zer i jedynek dla 24 chromosomów osobnika
         for (int i = 0; i < genes.length; i++) {
             for (int j = 0; j < genes[i].length; j++)
                 genes[i][j] = (int) Math.round(Math.random());
@@ -46,14 +56,25 @@ public class Individual extends Player {
     }
 
     public void calcTopDistance(Image img) {
+        //przekazanie funkcji snapshota wygenerowanej planszy
         final PixelReader pixelReader = img.getPixelReader();
+
+        //sprawdzenie kolejnych pixeli w osi Y
         outer:
         for (int y = (int) this.getCenterY(); y > 0; y--) {
+
+            //sprawdzanie wszerz w osi X kolejnych pixeli na wysokości y
             for (int x = (int) this.getCenterX() - (int) this.getRadius(); x <= (int) this.getCenterX() + (int) this.getRadius(); x++) {
+
+                //jeżeli pixel o współrzędnych x y ma kolor czerwony (kolor przeszkody), oznacza to, że przeszkoda znajduje się w odległości y od gracza
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
+
+                    //ustalana jest odległość od gracza do najbliższej przeszkody na górze
+                    //aktualna współrzędna Y gracza odjąć współrzędna, na której znaleziono przeszkodę dodać 25 (średnica gracza), pomnożone przez -1 aby wynik był dodatni
                     setTopDistance((int) this.getCenterY() - y + 25 * -1);
                     break outer;
                 }
+                //jeżeli nie znaleziono przeszkody, ustal odległość od krawędzi planszy - średnica gracza
                 setTopDistance((int) getCenterY() - 25);
             }
         }
@@ -106,10 +127,12 @@ public class Individual extends Player {
     }
 
     public void calcPointDistance() {
+        //obliczenie odległości od punktu w lini prostej
         setDistanceToPoint((Math.sqrt((GameViewModel.pointX - this.getCenterX()) * (GameViewModel.pointX - this.getCenterX()) + (GameViewModel.pointY - this.getCenterY()) * (GameViewModel.pointY - this.getCenterY()))) - 55);
     }
 
     public void calcXYPointDistances() {
+        //odległości od punktu w osiach X i Y
         this.setxDistanceToPoint((int) (GameViewModel.pointX - this.getCenterX()));
         this.setyDistanceToPoint((int) (GameViewModel.pointY - this.getCenterY()));
     }
@@ -201,9 +224,19 @@ public class Individual extends Player {
     public void calculateFitness() {
         setFitness(0);
         double multiplier = 1;
-        if(this.isPointReached()) multiplier = 1.3;
 
-        int effectiveMove = (int) ((Math.sqrt((GameViewModel.pointX - 50) * (GameViewModel.pointX - 50) + (GameViewModel.pointY - 50) * (GameViewModel.pointY - 50))) / this.getIndividualMovesCounter() );
+        //dodatkowy przelicznik dla osobników, które dotarły do punktu
+        if (this.isPointReached()) multiplier = 1.3;
+
+        //obliczanie efektywności każdego ruchu w celu zapobiegnięcia zapętleniu ruchów góra-dół lub prawo-lewo
+        //im mniej ruchów osobnik wynika aby dojść do celu, tym lepszy uzyska wynik
+        int distanceFromSpawnToPoint = (int) Math.sqrt((GameViewModel.pointX - 50) * (GameViewModel.pointX - 50) + (GameViewModel.pointY - 50) * (GameViewModel.pointY - 50));
+        int distanceFromPlayerToPoint = (int) Math.sqrt((GameViewModel.pointX - this.getCenterX()) * (GameViewModel.pointX - this.getCenterX()) + (GameViewModel.pointY - this.getCenterY()) * (GameViewModel.pointY - this.getCenterY()));
+        int effectiveMove = (distanceFromSpawnToPoint - distanceFromPlayerToPoint) / this.getIndividualMovesCounter() * 5;
+
+        //przystosowanie jest obliczane poprzez odjęcie od nieosiągalnej odległości od punktu (1002px)
+        // aktualnej (czyli w chwili śmierci) odległości osobnika i dodaniu współczynnika efektywności ruchu
+        //jeżeli osobnik dotarł do celu, całość jest mnożona dodatkowo przez 1.3 aby go wyróżnić
         setFitness((1002 - (int) distanceToPoint + effectiveMove) * multiplier);
     }
 
@@ -211,11 +244,8 @@ public class Individual extends Player {
         return genes;
     }
 
-    public void setGenes(int[][] genes) {
-        this.genes = genes;
-    }
-
     public void setSecondDimensionGenes(int chromosomePosition, int genePosition, int gene) {
+        //ustalenie genu na określonej pozycji - potrzebne przy mutacji
         this.getGenes()[chromosomePosition][genePosition] = gene;
     }
 
@@ -271,7 +301,4 @@ public class Individual extends Player {
         this.yDistanceToPoint = yDistanceToPoint;
     }
 
-    public double getDistanceToPoint() {
-        return distanceToPoint;
-    }
 }
