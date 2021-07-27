@@ -35,16 +35,16 @@ public class GeneticAlgorithm {
         crossedPopulation.getPopulation().add(new Individual(population.getPopulation().get(0).getGenes()));
         crossedPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
 
-        for (int i = 0; i < population.getPopulation().size()-2; i++) {
+        for (int i = 0; i < population.getPopulation().size() - 2; i++) {
 
             // rodzic to osobnik z początkowej populacji o indeksie i
             Individual parent1 = population.getPopulation().get(i);
-            if (Math.random() < crossoverRate && i != population.getPopulation().size()-1) { // jeżeli wylosowało krzyżowanie i indeks pierwszego rodzica nie jest ostantim w populacji
-                Individual parent2 = population.getPopulation().get(i+1);
+            if (Math.random() < crossoverRate && i != population.getPopulation().size() - 1) { // jeżeli wylosowało krzyżowanie i indeks pierwszego rodzica nie jest ostantim w populacji
+                Individual parent2 = population.getPopulation().get(i + 1);
 
                 // potomkowie przejmują całe geny rodziców
                 Individual offspring1 = population.getPopulation().get(i);
-                Individual offspring2 = population.getPopulation().get(i+1);
+                Individual offspring2 = population.getPopulation().get(i + 1);
 
                 for (int j = 0; j < parent1.getGenes().length; j++) {
                     for (int k = 0; k < parent1.getGenes()[j].length; k++) {
@@ -79,11 +79,7 @@ public class GeneticAlgorithm {
         newPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
 
         for (int i = 2; i < population.getPopulation().size(); i++) {
-            //nowy osobnik przejmie geny zwyciężcy turnieju
-//            Individual winner = tournamentSelection(population);
-            Individual newIndividual = new Individual(tournamentSelection(population).getGenes());
-//            newIndividual.setFitness(winner.getFitness());
-            newPopulation.getPopulation().add(newIndividual);
+            newPopulation.getPopulation().add(new Individual(tournamentSelection(population).getGenes()));
         }
         newPopulation.sortPopulationByFitness();
 

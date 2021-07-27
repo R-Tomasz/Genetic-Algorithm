@@ -11,14 +11,15 @@ import javafx.stage.Stage;
 
 import sample.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 
 public class GameView {
     private final GameViewModel viewModel;
 
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.02);
-    Population population = new Population(80);
+    GeneticAlgorithm ga = new GeneticAlgorithm(0.20, 0.02);
+    Population population = new Population(70);
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
@@ -29,11 +30,11 @@ public class GameView {
         Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
         // wygenerowanie przeszkód
-        Obstacle[] obstacles = new Obstacle[15];
+        Obstacle[] obstacles = new Obstacle[40];
         for (int i = 0; i < obstacles.length - 5; i++) {
             obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
             obstacles[i].setX((Math.random() * 901) + 20);
-            obstacles[i].setY((Math.random() * 351) + 100);
+            obstacles[i].setY((Math.random() * 341) + 100);
         }
         for (int i = obstacles.length - 5; i < obstacles.length; i++) {
             obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
@@ -62,9 +63,7 @@ public class GameView {
 
         AnimationTimer timer = new AnimationTimer() {
             int movesCounter = 0;
-            int availableMoves = 5;
-            int increaseMoves = 0; // zmienna pomocnicza do zwiększania liczby ruchów o 5 co 5 pokoleń
-            boolean obstaclesReinitialized = false;
+            int availableMoves = 250;
 
             @Override
             public void handle(long now) {
@@ -80,21 +79,6 @@ public class GameView {
                         if (individual.pointObtained(point)) {
                             System.out.println("WIN");
                             individual.setPointReached(true);
-                            root.getChildren().removeAll(obstacles);
-                            if(!obstaclesReinitialized){
-                                for (int i = 0; i < obstacles.length - 5; i++) {
-                                    obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
-                                    obstacles[i].setX((Math.random() * 901) + 20);
-                                    obstacles[i].setY((Math.random() * 351) + 100);
-                                }
-                                for (int i = obstacles.length - 5; i < obstacles.length; i++) {
-                                    obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
-                                    obstacles[i].setX((Math.random() * 901) + 100);
-                                    obstacles[i].setY(Math.random() * 101);
-                                }
-                                obstaclesReinitialized = true;
-                            }
-
                             root.getChildren().remove(individual);
                         }
                         individual.individualMovesCounter +=1;
@@ -116,10 +100,7 @@ public class GameView {
                         population.getPopulation().get(0).toFront();
                         population.getPopulation().get(1).toFront();
 
-//
-//                        increaseMoves++;
-//                        if(increaseMoves%5==0)
-                            availableMoves+=15;
+                        availableMoves+=15;
                         movesCounter = 0;
 
                     }

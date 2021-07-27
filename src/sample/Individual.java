@@ -70,12 +70,12 @@ public class Individual extends Player {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
 
                     //ustalana jest odległość od gracza do najbliższej przeszkody na górze
-                    //aktualna współrzędna Y gracza odjąć współrzędna, na której znaleziono przeszkodę dodać 25 (średnica gracza), pomnożone przez -1 aby wynik był dodatni
-                    setTopDistance((int) this.getCenterY() - y + 25 * -1);
+                    //aktualna współrzędna Y gracza odjąć współrzędna, na której znaleziono przeszkodę dodać 15 (średnica gracza), pomnożone przez -1 aby wynik był dodatni
+                    setTopDistance((int) this.getCenterY() - y + 15 * -1);
                     break outer;
                 }
                 //jeżeli nie znaleziono przeszkody, ustal odległość od krawędzi planszy - średnica gracza
-                setTopDistance((int) getCenterY() - 25);
+                setTopDistance((int) getCenterY() - 15);
             }
         }
 //        System.out.println("TOP:  " + topDistance);
@@ -87,10 +87,10 @@ public class Individual extends Player {
         for (int x = (int) this.getCenterX(); x > 0; x--) {
             for (int y = (int) this.getCenterY() - (int) this.getRadius(); y <= (int) this.getCenterY() + (int) this.getRadius(); y++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setLeftDistance((int) this.getCenterX() - x + 25 * -1);
+                    setLeftDistance((int) this.getCenterX() - x + 15 * -1);
                     break outer;
                 }
-                setLeftDistance((int) getCenterX() - 25);
+                setLeftDistance((int) getCenterX() - 15);
             }
         }
 //        System.out.println("LEFT:  " + leftDistance);
@@ -102,10 +102,10 @@ public class Individual extends Player {
         for (int y = (int) this.getCenterY(); y < img.getHeight(); y++) {
             for (int x = (int) this.getCenterX() - (int) this.getRadius(); x <= (int) this.getCenterX() + (int) this.getRadius(); x++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setBottomDistance(y - (int) this.getCenterY() - 25);
+                    setBottomDistance(y - (int) this.getCenterY() - 15);
                     break outer;
                 }
-                setBottomDistance(GameViewModel.sceneHeight - (int) getCenterY() - 25);
+                setBottomDistance(GameViewModel.sceneHeight - (int) getCenterY() - 15);
             }
         }
 //        System.out.println("BOTTOM:  " + bottomDistance);
@@ -117,10 +117,10 @@ public class Individual extends Player {
         for (int x = (int) this.getCenterX(); x < img.getWidth(); x++) {
             for (int y = (int) this.getCenterY() - (int) this.getRadius(); y <= (int) this.getCenterY() + (int) this.getRadius(); y++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setRightDistance(x - (int) this.getCenterX() - 25);
+                    setRightDistance(x - (int) this.getCenterX() - 15);
                     break outer;
                 }
-                setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 25);
+                setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 15);
             }
         }
 //        System.out.println("RIGHT:  " + rightDistance);
@@ -128,7 +128,7 @@ public class Individual extends Player {
 
     public void calcPointDistance() {
         //obliczenie odległości od punktu w lini prostej
-        setDistanceToPoint((Math.sqrt((GameViewModel.pointX - this.getCenterX()) * (GameViewModel.pointX - this.getCenterX()) + (GameViewModel.pointY - this.getCenterY()) * (GameViewModel.pointY - this.getCenterY()))) - 55);
+        setDistanceToPoint((Math.sqrt((GameViewModel.pointX - this.getCenterX()) * (GameViewModel.pointX - this.getCenterX()) + (GameViewModel.pointY - this.getCenterY()) * (GameViewModel.pointY - this.getCenterY()))) - (GameViewModel.playerRadius + 30));
     }
 
     public void calcXYPointDistances() {
@@ -148,13 +148,13 @@ public class Individual extends Player {
 
     public void moveSomewhere() {
 
-        double min = Math.abs(chancesForDirections[0]);
+        double min = chancesForDirections[0];
 
         int temp = 0;
         for (int i = 1; i < chancesForDirections.length; i++) {
-            if (Math.abs(chancesForDirections[i]) < min) {
+            if (chancesForDirections[i] < min) {
                 temp = i;
-                min = Math.abs(chancesForDirections[i]);
+                min = chancesForDirections[i];
             }
         }
         switch (temp) {
@@ -211,9 +211,9 @@ public class Individual extends Player {
             left[i] = (double) distancesToObstacles[1] * parameters[temp + 1];
             down[i] = (double) distancesToObstacles[2] * parameters[temp + 2];
             right[i] = (double) distancesToObstacles[3] * parameters[temp + 3];
-            xToPoint[i] = (double) getxDistanceToPoint() * parameters[temp + 4];
-            yToPoint[i] = (double) getyDistanceToPoint() * parameters[temp + 5];
-            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] + yToPoint[i];
+            xToPoint[i] = (double) getxDistanceToPoint() * 2*(parameters[temp + 4]);
+            yToPoint[i] = (double) getyDistanceToPoint() * 2*(parameters[temp + 5]);
+            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] +yToPoint[i];
             temp += 6;
 
             if (temp == 24) break;
