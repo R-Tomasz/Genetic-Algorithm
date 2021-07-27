@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Population {
-    int populationFitness;
+//    int populationFitness;
     ArrayList<Individual> population;
 
     public Population(){
@@ -34,12 +34,12 @@ public class Population {
                 '}';
     }
 
-    public void setPopulationFitness() {
-        int temp = 0;
-        for(int i = 0 ; i< this.getPopulation().size(); i++){
-            temp += this.getPopulation().get(i).getFitness();
-        }
-        this.populationFitness = temp / this.getPopulation().size();
-    }
+//    public void setPopulationFitness() {
+//        int temp = 0;
+//        for(int i = 0 ; i< this.getPopulation().size(); i++){
+//            temp += this.getPopulation().get(i).getFitness();
+//        }
+//        this.populationFitness = temp / this.getPopulation().size();
+//    }
 
 }

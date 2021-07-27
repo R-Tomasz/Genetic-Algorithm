@@ -1,13 +1,9 @@
 package sample.gui.gameView;
 
 import javafx.animation.AnimationTimer;
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -18,8 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -31,9 +25,6 @@ import java.util.Collections;
 public class GameView {
     private final GameViewModel viewModel;
     public int enteredPopulationSize;
-    public int enteredObstaclesNumber;
-    public double enteredCrossoverRate;
-    public double enteredMutationRate;
 
     Obstacle obstacles;
     AnimationTimer timer;
@@ -50,7 +41,6 @@ public class GameView {
 
         Group root = new Group();
 //        root.getChildren().addAll(player);
-//        root.getChildren().addAll(population.getPopulation());
         pane.getChildren().add(root);
 
 
@@ -62,7 +52,7 @@ public class GameView {
         // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
         Image image = pane.snapshot(new SnapshotParameters(), null);
 
-//        viewModel.moveOnKeyPressed(scene, player);
+        //viewModel.moveOnKeyPressed(scene, player);
 
         stage.setScene(scene);
         stage.show();
