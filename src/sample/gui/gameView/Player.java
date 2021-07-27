@@ -14,23 +14,19 @@ public class Player extends Circle {
     }
 
     public void moveUp() {
-//        if (!(getCenterY() - GameViewModel.movement <= GameViewModel.playerRadius))
             setCenterY(getCenterY() - GameViewModel.movement);
     }
 
     public void moveLeft() {
-//        if (!(getCenterX() - GameViewModel.movement <= GameViewModel.playerRadius))
             setCenterX(getCenterX() - GameViewModel.movement);
 
     }
 
     public void moveDown() {
-//        if (!(getCenterY() + GameViewModel.movement >= GameViewModel.sceneHeight - GameViewModel.playerRadius))
             setCenterY(getCenterY() + GameViewModel.movement);
     }
 
     public void moveRight() {
-//        if (!(getCenterX() + GameViewModel.movement >= GameViewModel.sceneWidth - GameViewModel.playerRadius))
             setCenterX(getCenterX() + GameViewModel.movement);
     }
 

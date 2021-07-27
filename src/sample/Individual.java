@@ -48,7 +48,7 @@ public class Individual extends Player {
     public Individual() {
         super(50, 50, GameViewModel.playerRadius);
 
-        //wylosowanie ośmiu zer i jedynek dla 24 chromosomów osobnika
+        //wylosowanie ciągu 8 bitów dla 24 chromosomów osobnika
         for (int i = 0; i < genes.length; i++) {
             for (int j = 0; j < genes[i].length; j++)
                 genes[i][j] = (int) Math.round(Math.random());
@@ -56,7 +56,7 @@ public class Individual extends Player {
     }
 
     public void calcTopDistance(Image img) {
-        //przekazanie funkcji snapshota wygenerowanej planszy
+        //snapshot wygenerowanej planszy
         final PixelReader pixelReader = img.getPixelReader();
 
         //sprawdzenie kolejnych pixeli w osi Y

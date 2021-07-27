@@ -13,6 +13,8 @@ public class GameViewModel {
     public static final int pointX = 950;
     public static final int pointY = 550;
 
+
+
     public void moveOnKeyPressed(Scene scene, Player circle) {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -26,7 +28,9 @@ public class GameViewModel {
     }
 
 
+
     public GameViewModel(GeneticAlgorithm ga) {
         this.ga = ga;
     }
+
 }
