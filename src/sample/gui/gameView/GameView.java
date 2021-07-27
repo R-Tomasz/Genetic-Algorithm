@@ -132,7 +132,7 @@ public class GameView {
         root.getChildren().add(grid);
 
 
-        start.setOnAction(actionEvent -> {
+        start.setOnAction(e -> {
             enteredPopulationSize = Integer.parseInt(inputPopSize.getText());
             if(enteredPopulationSize % 2 != 0) enteredPopulationSize +=1;
             ga = new GeneticAlgorithm(Double.parseDouble(inputCrossRate.getText()), Double.parseDouble(inputMutationRate.getText()));
