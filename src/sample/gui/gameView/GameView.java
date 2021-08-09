@@ -1,6 +1,7 @@
 package sample.gui.gameView;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FillTransition;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import sample.*;
 
 import java.util.Collections;
@@ -26,16 +28,21 @@ public class GameView {
     private final GameViewModel viewModel;
     public int enteredPopulationSize;
 
+    Pane pane = new Pane();
     Obstacle obstacles;
     AnimationTimer timer;
     GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.02);
     Population population = new Population(60);
+    FillTransition transition = new FillTransition();
+
+    // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
+    Image image;
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
-        stage.setTitle("Gra w kulki");
-        Pane pane = new Pane();
+        stage.setTitle("Optymalizacja strategii gracza za pomocą algorytmu genetycznego");
         GridPane grid = new GridPane();
+        Individual player = new Individual();
 
         Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
@@ -45,14 +52,14 @@ public class GameView {
 
 
 
+
         root.getChildren().add(point);
 
         Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
 
-        // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
-        Image image = pane.snapshot(new SnapshotParameters(), null);
 
-        //viewModel.moveOnKeyPressed(scene, player);
+//
+//        viewModel.moveOnKeyPressed(scene, player);
 
         stage.setScene(scene);
         stage.show();
@@ -66,11 +73,11 @@ public class GameView {
 
         //opis programu
         VBox descriptionRow = new VBox();
-        Text description = new Text("Gra polega na przejściu z punktu startowego do celu oznaczonego na niebiesko.\nPrzeszkody oznaczone czerwonym kolorem i generują się losowo na planszy.\nJeżeli gracz dotknie przeszkody, przegrywa.\nGracze to czarne kółka.\nDwóch najlepszych graczy z poprzedniego pokolenia mają kolor karmazynowy.");
+        Text description = new Text("Gra polega na przejściu z punktu startowego do celu oznaczonego na niebiesko.\nPrzeszkody oznaczone są czerwonym kolorem i generują się losowo na planszy.\nJeżeli gracz dotknie przeszkody lub krawędzi ekranu, przegrywa.\nGracze to czarne kółka.\nDwóch najlepszych graczy z poprzedniego pokolenia mają kolor karmazynowy.");
         descriptionRow.getChildren().add(description);
         GridPane.setConstraints(descriptionRow, 1, 0,1,4);
-        description.setFont(Font.font("verdana", 13));
-        description.setStyle("-fx-line-spacing: 4px;");
+        description.setFont(Font.font("verdana", 14));
+        description.setStyle("-fx-line-spacing: 6px;");
         GridPane.setConstraints(descriptionRow, 1, 0,1,2);
         descriptionRow.setPadding(new Insets(20, 0, 0, 30));
         grid.getChildren().add(descriptionRow);
@@ -85,8 +92,8 @@ public class GameView {
 
         //ilość przeszkód
         VBox obstaclesRow = new VBox();
-        final TextField inputObstaclesNumber = new TextField("30");
-        Label obstaclesNumberLabel = new Label("Ilość przeszkód, optymalna 20 - 35:");
+        final TextField inputObstaclesNumber = new TextField("25");
+        Label obstaclesNumberLabel = new Label("Ilość przeszkód, optymalna 15 - 30:");
         obstaclesRow.getChildren().addAll(obstaclesNumberLabel, inputObstaclesNumber);
         GridPane.setConstraints(obstaclesRow, 0, 1);
         grid.getChildren().add(obstaclesRow);
@@ -141,6 +148,7 @@ public class GameView {
 
             @Override
             public void handle(long now) {
+//                player.calcDistancesToAllObstaclesAndPoint(image);
                 for (Individual individual : population.getPopulation()) {
                     if (!(individual.isDead(obstacles.getObstacles()))) {
                         individual.calcDistancesToAllObstaclesAndPoint(image);
@@ -153,6 +161,7 @@ public class GameView {
                     if (individual.pointObtained(point)) {
                         System.out.println("WIN");
                         individual.setPointReached(true);
+                        colorBlink(point);
                         root.getChildren().remove(individual);
                     }
                     individual.individualMovesCounter += 1;
@@ -188,6 +197,15 @@ public class GameView {
 
     }
     public void run(){
+        image  = pane.snapshot(new SnapshotParameters(), null);
         timer.start();
+    }
+
+    public void colorBlink(Point point){
+        transition.setDuration(Duration.millis(500));
+        transition.setShape(point);
+        transition.setFromValue(Color.BLUEVIOLET);
+        transition.setToValue(Color.BLUE);
+        transition.play();
     }
 }

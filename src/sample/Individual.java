@@ -71,14 +71,13 @@ public class Individual extends Player {
 
                     //ustalana jest odległość od gracza do najbliższej przeszkody na górze
                     //aktualna współrzędna Y gracza odjąć współrzędna, na której znaleziono przeszkodę dodać 15 (średnica gracza), pomnożone przez -1 aby wynik był dodatni
-                    setTopDistance((int) this.getCenterY() - y + 15 * -1);
+                    setTopDistance((int) this.getCenterY() - y + (int)this.getRadius() * -1);
                     break outer;
                 }
                 //jeżeli nie znaleziono przeszkody, ustal odległość od krawędzi planszy - średnica gracza
                 setTopDistance((int) getCenterY() - 15);
             }
         }
-//        System.out.println("TOP:  " + topDistance);
     }
 
     public void calcLeftDistance(Image img) {
@@ -87,13 +86,12 @@ public class Individual extends Player {
         for (int x = (int) this.getCenterX(); x > 0; x--) {
             for (int y = (int) this.getCenterY() - (int) this.getRadius(); y <= (int) this.getCenterY() + (int) this.getRadius(); y++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setLeftDistance((int) this.getCenterX() - x + 15 * -1);
+                    setLeftDistance((int) this.getCenterX() - x + (int)this.getRadius() * -1);
                     break outer;
                 }
                 setLeftDistance((int) getCenterX() - 15);
             }
         }
-//        System.out.println("LEFT:  " + leftDistance);
     }
 
     public void calcBottomDistance(Image img) {
@@ -102,13 +100,12 @@ public class Individual extends Player {
         for (int y = (int) this.getCenterY(); y < img.getHeight(); y++) {
             for (int x = (int) this.getCenterX() - (int) this.getRadius(); x <= (int) this.getCenterX() + (int) this.getRadius(); x++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setBottomDistance(y - (int) this.getCenterY() - 15);
+                    setBottomDistance(y - (int) this.getCenterY() - (int)this.getRadius());
                     break outer;
                 }
                 setBottomDistance(GameViewModel.sceneHeight - (int) getCenterY() - 15);
             }
         }
-//        System.out.println("BOTTOM:  " + bottomDistance);
     }
 
     public void calcRightDistance(Image img) {
@@ -117,13 +114,13 @@ public class Individual extends Player {
         for (int x = (int) this.getCenterX(); x < img.getWidth(); x++) {
             for (int y = (int) this.getCenterY() - (int) this.getRadius(); y <= (int) this.getCenterY() + (int) this.getRadius(); y++) {
                 if (pixelReader.getColor(x, y).equals(Color.RED)) {
-                    setRightDistance(x - (int) this.getCenterX() - 15);
+                    setRightDistance(x - (int) this.getCenterX() - (int)this.getRadius());
                     break outer;
                 }
                 setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 15);
             }
         }
-//        System.out.println("RIGHT:  " + rightDistance);
+
     }
 
     public void calcPointDistance() {
@@ -133,8 +130,8 @@ public class Individual extends Player {
 
     public void calcXYPointDistances() {
         //odległości od punktu w osiach X i Y
-        this.setxDistanceToPoint((int) (GameViewModel.pointX - this.getCenterX()));
-        this.setyDistanceToPoint((int) (GameViewModel.pointY - this.getCenterY()));
+        this.setxDistanceToPoint(Math.abs((int) (GameViewModel.pointX - this.getCenterX())));
+        this.setyDistanceToPoint(Math.abs((int) (GameViewModel.pointY - this.getCenterY())));
     }
 
     public void calcDistancesToAllObstaclesAndPoint(Image img) {
@@ -147,9 +144,7 @@ public class Individual extends Player {
     }
 
     public void moveSomewhere() {
-
         double min = chancesForDirections[0];
-
         int temp = 0;
         for (int i = 1; i < chancesForDirections.length; i++) {
             if (chancesForDirections[i] < min) {
@@ -195,9 +190,7 @@ public class Individual extends Player {
 
     public void calculateMove() {
         calculateValueFromGene();
-
         int[] distancesToObstacles = new int[]{getTopDistance(), getLeftDistance(), getBottomDistance(), getRightDistance()};
-
         double[] up = new double[4];
         double[] left = new double[4];
         double[] down = new double[4];
@@ -211,11 +204,10 @@ public class Individual extends Player {
             left[i] = (double) distancesToObstacles[1] * parameters[temp + 1];
             down[i] = (double) distancesToObstacles[2] * parameters[temp + 2];
             right[i] = (double) distancesToObstacles[3] * parameters[temp + 3];
-            xToPoint[i] = (double) getxDistanceToPoint() * 2*(parameters[temp + 4]);
-            yToPoint[i] = (double) getyDistanceToPoint() * 2*(parameters[temp + 5]);
-            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] +yToPoint[i];
+            xToPoint[i] = (double) getxDistanceToPoint() * (parameters[temp + 4]);
+            yToPoint[i] = (double) getyDistanceToPoint() * (parameters[temp + 5]);
+            chancesForDirections[i] = up[i] + left[i] + down[i] + right[i] + xToPoint[i] + yToPoint[i];
             temp += 6;
-
             if (temp == 24) break;
         }
     }

@@ -19,7 +19,6 @@ public class Player extends Circle {
 
     public void moveLeft() {
             setCenterX(getCenterX() - GameViewModel.movement);
-
     }
 
     public void moveDown() {

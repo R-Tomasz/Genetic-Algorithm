@@ -13,7 +13,7 @@ public class GeneticAlgorithm {
 
     public Individual tournamentSelection(Population population) {
         Population tournament = new Population();
-        int tournamentKnights = 4; // liczba osobników w turnieju
+        int tournamentKnights = 2; // liczba osobników w turnieju
 
         for (int i = 0; i < tournamentKnights; i++) {
             // losowanie z wejściowej populacji indeksów osobników, nie można wylosować dwóch najlepszych osobników
@@ -50,7 +50,6 @@ public class GeneticAlgorithm {
                     for (int k = 0; k < parent1.getGenes()[j].length; k++) {
 
                         if (Math.random() < 0.5) {
-                            // geny rodziców krzyżują się z prawdopodobieństwem 50% w dzieciach
                             offspring1.setSecondDimensionGenes(j, k, parent2.getGenes()[j][k]);
                             offspring2.setSecondDimensionGenes(j, k, parent1.getGenes()[j][k]);
                         } else {
@@ -91,24 +90,17 @@ public class GeneticAlgorithm {
         mutatedPopulation.getPopulation().add(new Individual(population.getPopulation().get(0).getGenes()));
         mutatedPopulation.getPopulation().add(new Individual(population.getPopulation().get(1).getGenes()));
         for (int i = 2; i < population.getPopulation().size(); i++) {
-            // wstępne przepisanie osobnika z wejściowej populacji
             mutatedPopulation.getPopulation().add(population.getPopulation().get(i));
-
             for (int j = 0; j < population.getPopulation().get(i).getGenes().length; j++) {
                 if (Math.random() <= mutationRate) {
-
-                    //jeżeli w chromosomie ma zajść mutacja, zamień losowy bit w tym chromosomie
                     int mutationPosition = (int) (Math.random() * (population.getPopulation().get(0).getGenes()[0].length));
                     if (population.getPopulation().get(i).getGenes()[j][mutationPosition] == 0)
                         mutatedPopulation.getPopulation().get(i).setSecondDimensionGenes(j, mutationPosition, 1);
                     else
                         mutatedPopulation.getPopulation().get(i).setSecondDimensionGenes(j, mutationPosition, 0);
-
                 }
-
             }
         }
         return mutatedPopulation;
     }
-
 }

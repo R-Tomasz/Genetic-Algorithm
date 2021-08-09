@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Population {
-//    int populationFitness;
     ArrayList<Individual> population;
 
     public Population(){

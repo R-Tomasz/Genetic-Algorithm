@@ -13,20 +13,16 @@ public class GameViewModel {
     public static final int pointX = 950;
     public static final int pointY = 550;
 
-
-
-    public void moveOnKeyPressed(Scene scene, Player circle) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case W -> circle.setCenterY(circle.getCenterY() - movement);
-                case D -> circle.setCenterX(circle.getCenterX() + movement);
-                case S -> circle.setCenterY(circle.getCenterY() + movement);
-                case A -> circle.setCenterX(circle.getCenterX() - movement);
-
-            }
-        });
-    }
-
+//    public void moveOnKeyPressed(Scene scene, Player circle) {
+//        scene.setOnKeyPressed(event -> {
+//            switch (event.getCode()) {
+//                case W -> circle.setCenterY(circle.getCenterY() - movement);
+//                case D -> circle.setCenterX(circle.getCenterX() + movement);
+//                case S -> circle.setCenterY(circle.getCenterY() + movement);
+//                case A -> circle.setCenterX(circle.getCenterX() - movement);
+//            }
+//        });
+//    }
 
 
     public GameViewModel(GeneticAlgorithm ga) {
