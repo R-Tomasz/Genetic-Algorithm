@@ -120,7 +120,6 @@ public class Individual extends Player {
                 setRightDistance(GameViewModel.sceneWidth - (int) getCenterX() - 15);
             }
         }
-
     }
 
     public void calcPointDistance() {
@@ -140,7 +139,6 @@ public class Individual extends Player {
         calcBottomDistance(img);
         calcRightDistance(img);
         calcXYPointDistances();
-        calcPointDistance();
     }
 
     public void moveSomewhere() {
@@ -229,7 +227,7 @@ public class Individual extends Player {
         //przystosowanie jest obliczane poprzez odjęcie od nieosiągalnej odległości od punktu (1002px)
         // aktualnej (czyli w chwili śmierci) odległości osobnika i dodaniu współczynnika efektywności ruchu
         //jeżeli osobnik dotarł do celu, całość jest mnożona dodatkowo przez 1.3 aby go wyróżnić
-        setFitness((1002 - (int) distanceToPoint + effectiveMove) * multiplier);
+        setFitness((1020 - (int) distanceToPoint + effectiveMove) * multiplier);
     }
 
     public int[][] getGenes() {

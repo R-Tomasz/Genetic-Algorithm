@@ -31,8 +31,8 @@ public class GameView {
     Pane pane = new Pane();
     Obstacle obstacles;
     AnimationTimer timer;
-    GeneticAlgorithm ga = new GeneticAlgorithm(0.2, 0.02);
-    Population population = new Population(60);
+    GeneticAlgorithm ga;
+    Population population;
     FillTransition transition = new FillTransition();
 
     // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
@@ -42,28 +42,20 @@ public class GameView {
         this.viewModel = viewModel;
         stage.setTitle("Optymalizacja strategii gracza za pomocą algorytmu genetycznego");
         GridPane grid = new GridPane();
-        Individual player = new Individual();
 
         Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
 
         Group root = new Group();
-//        root.getChildren().addAll(player);
         pane.getChildren().add(root);
-
-
-
-
         root.getChildren().add(point);
-
         Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
 
-
-//
+//        Individual player = new Individual();
+//        root.getChildren().addAll(player);
 //        viewModel.moveOnKeyPressed(scene, player);
 
         stage.setScene(scene);
         stage.show();
-
 
         // okienko do wprowadzania danych
         grid.setPadding(new Insets(200, 450, 300, 150));
@@ -148,7 +140,6 @@ public class GameView {
 
             @Override
             public void handle(long now) {
-//                player.calcDistancesToAllObstaclesAndPoint(image);
                 for (Individual individual : population.getPopulation()) {
                     if (!(individual.isDead(obstacles.getObstacles()))) {
                         individual.calcDistancesToAllObstaclesAndPoint(image);
@@ -159,7 +150,6 @@ public class GameView {
                     }
 
                     if (individual.pointObtained(point)) {
-                        System.out.println("WIN");
                         individual.setPointReached(true);
                         colorBlink(point);
                         root.getChildren().remove(individual);
@@ -167,11 +157,12 @@ public class GameView {
                     individual.individualMovesCounter += 1;
                     movesCounter++;
                 }
-                if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik
+                if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik i czy limit ruchów został osiągnięty
                     for (Individual individ : population.getPopulation()) {
+                        individ.calcPointDistance();
                         individ.calculateFitness();
                     }
-                    population.sortPopulationByFitness(); //sortowanie potrzebne do elitaryzmu
+                    population.sortPopulationByFitness();
                     root.getChildren().removeAll(population.getPopulation());
                     population = ga.makeNewPopulation(population);
                     population = ga.crossover(population);
@@ -185,17 +176,12 @@ public class GameView {
 
                     availableMoves += 15;
                     movesCounter = 0;
-
                 }
             }
-
         };
-
-
-
-
-
     }
+
+
     public void run(){
         image  = pane.snapshot(new SnapshotParameters(), null);
         timer.start();
