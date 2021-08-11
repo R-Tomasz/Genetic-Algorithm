@@ -139,6 +139,7 @@ public class Individual extends Player {
         calcBottomDistance(img);
         calcRightDistance(img);
         calcXYPointDistances();
+        calcPointDistance();
     }
 
     public void moveSomewhere() {

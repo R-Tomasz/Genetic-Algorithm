@@ -176,6 +176,7 @@ public class GameView {
 
                     availableMoves += 15;
                     movesCounter = 0;
+
                 }
             }
         };
