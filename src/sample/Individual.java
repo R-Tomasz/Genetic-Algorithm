@@ -1,10 +1,10 @@
-package sample;
+package sample.geneticAlgorithm;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import sample.gui.gameView.GameViewModel;
-import sample.gui.gameView.Player;
+import sample.game.Player;
 
 public class Individual extends Player {
     double fitness = 0;

@@ -1,4 +1,4 @@
-package sample;
+package sample.geneticAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Comparator;

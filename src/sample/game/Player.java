@@ -1,9 +1,8 @@
-package sample.gui.gameView;
+package sample.game;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
-import sample.Obstacle;
-import sample.Point;
+import sample.gui.gameView.GameViewModel;
 
 public class Player extends Circle {
     boolean pointReached;
