@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 
 import javafx.util.Duration;
 import sample.*;
+import sample.game.Obstacle;
+import sample.game.Point;
 
 import java.util.Collections;
 

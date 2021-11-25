@@ -1,4 +1,4 @@
-package sample.geneticAlgorithm;
+package sample;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;

@@ -1,4 +1,4 @@
-package sample.geneticAlgorithm;
+package sample;
 
 
 public class GeneticAlgorithm {
