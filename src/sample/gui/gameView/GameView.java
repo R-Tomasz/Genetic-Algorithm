@@ -1,124 +1,200 @@
 package sample.gui.gameView;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FillTransition;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import sample.*;
+import sample.game.Obstacle;
+import sample.game.Point;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class GameView {
     private final GameViewModel viewModel;
+    public int enteredPopulationSize;
 
+    Pane pane = new Pane();
+    Obstacle obstacles;
+    AnimationTimer timer;
+    GeneticAlgorithm ga;
+    Population population;
+    FillTransition transition = new FillTransition();
+
+    // image przechowuje zdjęcie wygenerowanej planszy, słuzy do obliczania oddległości przeszkód od gracza
+    Image image;
 
     public GameView(Stage stage, GameViewModel viewModel) {
         this.viewModel = viewModel;
-        stage.setTitle("Super gra");
-        Player player = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
+        stage.setTitle("Optymalizacja strategii gracza za pomocą algorytmu genetycznego");
+        GridPane grid = new GridPane();
+
+        Point point = new Point(GameViewModel.pointX, GameViewModel.pointY, 30);
+
+        Group root = new Group();
+        pane.getChildren().add(root);
+        root.getChildren().add(point);
+        Scene scene = new Scene(pane, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
+
 //        Individual player = new Individual();
-        Population population = new Population(10);
-//        Player p1 = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
-//        Player p2 = new Player(GameViewModel.playerX, GameViewModel.playerY, GameViewModel.playerRadius);
+//        root.getChildren().addAll(player);
+//        viewModel.moveOnKeyPressed(scene, player);
 
-        //System.out.println(population);
+        stage.setScene(scene);
+        stage.show();
 
-        int pointsSize = 10;
-        ArrayList<Point> points = new ArrayList<>(pointsSize);
+        // okienko do wprowadzania danych
+        grid.setPadding(new Insets(200, 450, 300, 150));
+        grid.setBackground(new Background(new BackgroundFill(Color.WHEAT, CornerRadii.EMPTY, Insets.EMPTY)));
+        grid.setVgap(5);
+        grid.setHgap(5);
+
+        //opis programu
+        VBox descriptionRow = new VBox();
+        Text description = new Text("Gra polega na przejściu z punktu startowego do celu oznaczonego na niebiesko.\nPrzeszkody oznaczone są czerwonym kolorem i generują się losowo na planszy.\nJeżeli gracz dotknie przeszkody lub krawędzi ekranu, przegrywa.\nGracze to czarne kółka.\nDwóch najlepszych graczy z poprzedniego pokolenia mają kolor karmazynowy.");
+        descriptionRow.getChildren().add(description);
+        GridPane.setConstraints(descriptionRow, 1, 0,1,4);
+        description.setFont(Font.font("verdana", 14));
+        description.setStyle("-fx-line-spacing: 6px;");
+        GridPane.setConstraints(descriptionRow, 1, 0,1,2);
+        descriptionRow.setPadding(new Insets(20, 0, 0, 30));
+        grid.getChildren().add(descriptionRow);
+
+        //wielkość populacji
+        VBox popSizeRow = new VBox();
+        final TextField inputPopSize = new TextField("70");
+        Label popSizeLabel = new Label("Wielkość populacji, optymalna 50 - 100:");
+        popSizeRow.getChildren().addAll(popSizeLabel, inputPopSize);
+        GridPane.setConstraints(popSizeRow, 0, 0);
+        grid.getChildren().add(popSizeRow);
+
+        //ilość przeszkód
+        VBox obstaclesRow = new VBox();
+        final TextField inputObstaclesNumber = new TextField("25");
+        Label obstaclesNumberLabel = new Label("Ilość przeszkód, optymalna 15 - 30:");
+        obstaclesRow.getChildren().addAll(obstaclesNumberLabel, inputObstaclesNumber);
+        GridPane.setConstraints(obstaclesRow, 0, 1);
+        grid.getChildren().add(obstaclesRow);
+
+        //xover
+        VBox crossRow = new VBox();
+        final TextField inputCrossRate = new TextField("0.2");
+        Label crossRateLabel = new Label("Szansa na krzyżowanie, optymalna 0.2 - 0.4:");
+        crossRow.getChildren().addAll(crossRateLabel, inputCrossRate);
+        GridPane.setConstraints(crossRow, 0, 2);
+        grid.getChildren().add(crossRow);
+
+        //Szansa na mutację
+        VBox mutateRow = new VBox();
+        final TextField inputMutationRate = new TextField("0.02");
+        Label mutateRateLabel = new Label("Szansa na mutację, optymalna 0.01 - 0.03:");
+        mutateRow.getChildren().addAll(mutateRateLabel, inputMutationRate);
+        GridPane.setConstraints(mutateRow, 0, 3);
+        grid.getChildren().add(mutateRow);
+
+        //start
+        Button start = new Button("Start");
+        start.setMaxWidth(100);
+        start.setAlignment(Pos.CENTER);
+        GridPane.setConstraints(start, 0, 5);
+        GridPane.setHalignment(start, HPos.CENTER);
+        grid.getChildren().add(start);
+
+        GridPane.getVgrow(obstaclesRow);
 
 
-        Obstacle[] obstacles = new Obstacle[10];
-        for (int i = 0; i < obstacles.length; i++) {
-            obstacles[i] = new Obstacle((int) (Math.random() * 20) + 20, (int) (Math.random() * 90) + 10);
-            obstacles[i].setX((Math.random() * (GameViewModel.sceneWidth - 49) + 25));
-            obstacles[i].setY(Math.random() * (GameViewModel.sceneHeight - 49) + 25);
-        }
 
-        Group root = new Group(obstacles);
-        root.getChildren().addAll(player);
-        //root.getChildren().addAll(population.getPopulation());
-
-        for (int i = 0; i < pointsSize; i++) {
-            points.add(new Point(((Math.random() * (GameViewModel.sceneWidth - 49)) + 25), ((Math.random() * (GameViewModel.sceneHeight - 49)) + 25), (Math.random() * 30) + 8, (Math.random() * 30) + 8));
-            root.getChildren().add(points.get(i));
-        }
-
-        Scene scene = new Scene(root, GameViewModel.sceneWidth, GameViewModel.sceneHeight);
-        System.out.println(points.get(0).getLayoutBounds());
+        root.getChildren().add(grid);
 
 
-        final double[] rangeRight = {0};
-        final double[] rangeLeft = {0};
+        start.setOnAction(e -> {
+            enteredPopulationSize = Integer.parseInt(inputPopSize.getText());
+            if(enteredPopulationSize % 2 != 0) enteredPopulationSize +=1;
+            ga = new GeneticAlgorithm(Double.parseDouble(inputCrossRate.getText()), Double.parseDouble(inputMutationRate.getText()));
+            population = new Population(enteredPopulationSize);
+            obstacles = new Obstacle (Integer.parseInt(inputObstaclesNumber.getText()));
+            root.getChildren().remove(grid);
+            root.getChildren().addAll(obstacles.getObstacles());
+            root.getChildren().addAll(population.getPopulation());
+            run();
+        });
 
 
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
+            int movesCounter = 0;
+            int availableMoves = 250;
+
             @Override
             public void handle(long now) {
-//                if (player.getLayoutBounds().getCenterX() < obstacles[0].getBoundsInLocal().getCenterX()) {
-//                    rangeRight[0] = obstacles[0].getBoundsInLocal().getCenterX() - player.centerXProperty().get();
-//                    rangeLeft[0] = 0;
-//                } else {
-//                    rangeLeft[0] = player.centerXProperty().get() - obstacles[0].getBoundsInLocal().getCenterX() ;
-//                    rangeRight[0] = 0;
-//                }
-
-                for (Obstacle obstacle : obstacles) {
-
-//                    for(Individual player : population.getPopulation()){
-                    if (player.intersects(obstacle.getLayoutBounds())) {
-                        root.getChildren().remove(player);
-                            population.getPopulation().remove(player); //tu cos jakis blad chyba
-//                    }
+                for (Individual individual : population.getPopulation()) {
+                    if (!(individual.isDead(obstacles.getObstacles()))) {
+                        individual.calcDistancesToAllObstaclesAndPoint(image);
+                        individual.calculateMove();
+                        individual.moveSomewhere();
+                    } else {
+                        root.getChildren().remove(individual);
                     }
+
+                    if (individual.pointObtained(point)) {
+                        individual.setPointReached(true);
+                        colorBlink(point);
+                        root.getChildren().remove(individual);
+                    }
+                    individual.individualMovesCounter += 1;
+                    movesCounter++;
                 }
-                for (Point point : points) {
-//                    for(Individual player : population.getPopulation()){
-                    if (player.intersects(point.getLayoutBounds()) && !point.isObtained()) {
-                        player.addPoint(point.getPointValue());
-                        root.getChildren().remove(point);
-                        points.remove(point);
-                        Point newPoint = new Point(((Math.random() * (GameViewModel.sceneWidth - 49)) + 25), ((Math.random() * (GameViewModel.sceneHeight - 49)) + 25), (Math.random() * 30) + 8, (Math.random() * 30) + 8);
-                        points.add(newPoint);
-                        root.getChildren().add(newPoint);
-                        point.setObtained(true);
-                        }
-//                    }
-                    System.out.println(player.getPoints());
-//                    System.out.println("odleglosc z prawej: " + rangeRight[0]);
-//                    System.out.println("odleglosc z lewej: " + rangeLeft[0]);
+                if (Collections.disjoint(root.getChildren(), population.getPopulation()) || movesCounter % (population.getPopulation().size() * availableMoves) == 0) { // sprawdzenie czy na planszy jest jakiś osobnik i czy limit ruchów został osiągnięty
+                    for (Individual individ : population.getPopulation()) {
+                        individ.calcPointDistance();
+                        individ.calculateFitness();
+                    }
+                    population.sortPopulationByFitness();
+                    root.getChildren().removeAll(population.getPopulation());
+                    population = ga.makeNewPopulation(population);
+                    population = ga.crossover(population);
+                    population = ga.mutatePopulation(population);
+
+                    root.getChildren().addAll(population.getPopulation());
+                    population.getPopulation().get(0).setFill(Color.CRIMSON);
+                    population.getPopulation().get(1).setFill(Color.CRIMSON);
+                    population.getPopulation().get(0).toFront();
+                    population.getPopulation().get(1).toFront();
+
+                    availableMoves += 15;
+                    movesCounter = 0;
+
                 }
             }
         };
+    }
+
+
+    public void run(){
+        image  = pane.snapshot(new SnapshotParameters(), null);
         timer.start();
-        obstacles[0].setFill(Color.YELLOW);
-population.getPopulation().get(1).setFill(Color.CHOCOLATE);
+    }
 
-//        double rangeRight = player.centerXProperty().get() + obstacles[0].getLayoutBounds().getCenterX();
-
-//        p1.setFill(Color.CHOCOLATE);
-//        p2.setFill(Color.CRIMSON);
-//        root.getChildren().addAll(p1, p2);
-//        viewModel.moveOnKeyPressed(scene, p1);
-        viewModel.moveOnKeyPressed(scene, player);
-
-
-//        System.out.println(rangeRight);
-
-
-
-        stage.setScene(scene);
-
-
-        GeneticAlgorithm pop = new GeneticAlgorithm(0.25, 0.02, 10);
-        //Population population = pop.initializePopulation(10);
-
-
-        stage.show();
+    public void colorBlink(Point point){
+        transition.setDuration(Duration.millis(500));
+        transition.setShape(point);
+        transition.setFromValue(Color.BLUEVIOLET);
+        transition.setToValue(Color.BLUE);
+        transition.play();
     }
 }

@@ -5,4 +5,5 @@ module Optymalizacja.strategii.gracza.za.pomoc.algorytmu.genetycznego {
 
     opens sample;
     opens sample.gui.gameView;
+    opens sample.game;
 }
